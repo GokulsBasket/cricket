@@ -1220,6 +1220,21 @@ button {
     pointer-events: none;
 }
 
+/* Auction Timer */
+.auction-timer {
+    background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%);
+    border-radius: 25px;
+    padding: 8px 16px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    border: 2px solid #667eea;
+    animation: timerPulse 1s ease-in-out infinite;
+}
+
+@keyframes timerPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
 .auction-actions button:hover::after {
     opacity: 1;
 }
