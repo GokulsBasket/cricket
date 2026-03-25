@@ -430,6 +430,11 @@ function removeTeam(id) {
     updateStats();
 }
 
+// Stop Auction Timer (no-op if timer was removed)
+function stopAuctionTimer() {
+    // Timer functionality removed
+}
+
 // Undo Last Bid
 function undoBid() {
     console.log('undoBid called, bidHistory length:', bidHistory.length);
@@ -499,7 +504,7 @@ function sellPlayer() {
 
     console.log('Sold players after push:', soldPlayers);
 
-    // Remove from available players
+    // Remove from available players - CRITICAL: must happen before getNextPlayer
     players = players.filter(p => p.id !== player.id);
 
     // Show modal with correct sold price
@@ -516,7 +521,13 @@ function sellPlayer() {
     updateStats();
 
     // Get next player
-    setTimeout(getNextPlayer, 1000);
+    setTimeout(() => {
+        if (players.length === 0) {
+            showAuctionComplete();
+        } else {
+            getNextPlayer();
+        }
+    }, 1000);
 }
 
 function showSaleModal(playerName, teamName, amount) {
