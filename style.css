@@ -988,7 +988,7 @@ button {
 
 .player-image-large img {
     display: block;
-    width: 250px;
+    width: 350px;
     height: auto;
     object-fit: cover;
     border-radius: 16px;
