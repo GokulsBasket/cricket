@@ -8,6 +8,10 @@ let currentBid = 0;
 let currentBidder = null;
 let bidHistory = []; // For undo functionality
 
+// Timer variables
+let auctionTimer = null;
+let timeRemaining = 20; // 20 seconds
+
 // Initialize from localStorage
 function initializeData() {
     const savedPlayers = localStorage.getItem('cricketPlayers');
@@ -47,6 +51,11 @@ function switchPage(pageName) {
     const navBar = document.querySelector('.navbar');
     if (navBar) {
         navBar.style.display = (pageName === 'auction' ? 'none' : 'flex');
+    }
+
+    // Stop auction timer when leaving auction page
+    if (pageName !== 'auction') {
+        stopAuctionTimer();
     }
 
     // Show selected page
@@ -117,6 +126,44 @@ function getNextBidAmount(currentAmount) {
         return currentAmount + 25;
     } else {
         return currentAmount + 100;
+    }
+}
+
+// Timer Functions
+function startAuctionTimer() {
+    clearInterval(auctionTimer);
+    timeRemaining = 20;
+
+    auctionTimer = setInterval(() => {
+        timeRemaining--;
+
+        // Update timer display
+        updateTimerDisplay();
+
+        if (timeRemaining <= 0) {
+            clearInterval(auctionTimer);
+            // Auto-sell if there's a current bidder
+            if (currentBidder) {
+                sellPlayer();
+            } else {
+                // If no bidder, auto-sell at base price
+                sellPlayer();
+            }
+        }
+    }, 1000);
+}
+
+function stopAuctionTimer() {
+    clearInterval(auctionTimer);
+    timeRemaining = 20;
+    updateTimerDisplay();
+}
+
+function updateTimerDisplay() {
+    const timerElement = document.getElementById('auctionTimer');
+    if (timerElement) {
+        timerElement.textContent = timeRemaining;
+        timerElement.style.color = timeRemaining <= 5 ? '#ff4757' : timeRemaining <= 10 ? '#ffa726' : '#2ed573';
     }
 }
 
@@ -326,6 +373,11 @@ function getNextPlayer() {
     currentBidder = null;
     bidHistory = [];
 
+    // Stop any existing timer and start fresh
+    stopAuctionTimer();
+    // Start timer for bidding
+    startAuctionTimer();
+
     renderAuction();
 }
 
@@ -358,6 +410,9 @@ function teamBid(teamId) {
         currentBidder = { id: teamId, name: team.name };
     }
 
+    // Start/restart the auction timer
+    startAuctionTimer();
+
     renderAuction();
 }
 
@@ -376,6 +431,10 @@ function undoBid() {
     currentBidder = lastBid.previousBidder;
 
     console.log('Undid bid, currentBid:', currentBid, 'currentBidder:', currentBidder);
+
+    // Restart timer after undo
+    startAuctionTimer();
+
     renderAuction();
 }
 function sellPlayer() {
@@ -440,6 +499,7 @@ function sellPlayer() {
     currentBid = 0;
     currentBidder = null;
     bidHistory = []; // Clear bid history
+    stopAuctionTimer();
 
     saveData();
     updateStats();
@@ -464,6 +524,7 @@ function closeSaleModal() {
 
 // Show Auction Complete
 function showAuctionComplete() {
+    stopAuctionTimer();
     const container = document.getElementById('auctionContainer');
     container.innerHTML = `
         <div class="empty-state" style="padding: 60px 20px;">
@@ -715,6 +776,9 @@ function renderAuction() {
                 <div class="player-info-large">
                     <div class="auction-player-name">${currentAuctionPlayer.name}</div>
                     <div class="player-rating">⭐ ${currentAuctionPlayer.overallRating}/10</div>
+                    <div class="auction-timer" style="margin-top: 10px; font-size: 18px; font-weight: bold;">
+                        Time: <span id="auctionTimer">${timeRemaining}</span>s
+                    </div>
                 </div>
             </div>
             
