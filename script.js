@@ -831,7 +831,7 @@ function renderAuction() {
             
             <div style="display: flex; gap: 20px; margin-bottom: 25px;">
                 <!-- Left Side: Player Image (30%) -->
-                <div style="flex: 0 0 30%; display: flex; align-items: flex-start; justify-content: center;">
+                <div style="flex: 0 0 30%; display: flex; align-items: flex-start;">
                     <div class="player-image-large">
                         <img src="${currentAuctionPlayer.imageUrl}" alt="${currentAuctionPlayer.name}" onerror="this.src='https://via.placeholder.com/180x240/667eea/ffffff?text=Player'" />
                     </div>
