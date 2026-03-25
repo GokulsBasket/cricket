@@ -1,3 +1,8 @@
+// Firebase imports
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-analytics.js";
+import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+
 // Data Storage
 let players = [];
 let teams = [];
@@ -12,19 +17,50 @@ let bidHistory = []; // For undo functionality
 let auctionTimer = null;
 let timeRemaining = 20; // 20 seconds
 
-// Initialize from localStorage
+// Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyBmZsTSawjY9Tv8z6DGnoFDLvaVOPLNjuQ",
+  authDomain: "cricket-2ee96.firebaseapp.com",
+  databaseURL: "https://cricket-2ee96-default-rtdb.firebaseio.com",
+  projectId: "cricket-2ee96",
+  storageBucket: "cricket-2ee96.appspot.com",
+  messagingSenderId: "160713673084",
+  appId: "1:160713673084:web:b0dc748f1db1d53efc3cf9",
+  measurementId: "G-T0HPYH01T4"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+const database = getDatabase(app);
+
+const dbRef = ref(database, 'cricketApp');
+
+
+// Initialize from Firebase Realtime Database
 function initializeData() {
-    const savedPlayers = localStorage.getItem('cricketPlayers');
-    const savedTeams = localStorage.getItem('cricketTeams');
-    const savedSold = localStorage.getItem('cricketSold');
-    const savedUnsold = localStorage.getItem('cricketUnsold');
-
-    if (savedPlayers) players = JSON.parse(savedPlayers);
-    if (savedTeams) teams = JSON.parse(savedTeams);
-    if (savedSold) soldPlayers = JSON.parse(savedSold);
-    if (savedUnsold) unsoldPlayers = JSON.parse(savedUnsold);
-
-    renderAll();
+    get(child(ref(database), 'cricketApp')).then((snapshot) => {
+        if (snapshot.exists()) {
+            const data = snapshot.val();
+            players = data.players || [];
+            teams = data.teams || [];
+            soldPlayers = data.soldPlayers || [];
+            unsoldPlayers = data.unsoldPlayers || [];
+        } else {
+            players = [];
+            teams = [];
+            soldPlayers = [];
+            unsoldPlayers = [];
+        }
+        renderAll();
+    }).catch((error) => {
+        console.error('Firebase initialization error:', error);
+        players = [];
+        teams = [];
+        soldPlayers = [];
+        unsoldPlayers = [];
+        renderAll();
+    });
 }
 
 // Page Navigation
@@ -416,7 +452,26 @@ function teamBid(teamId) {
     renderAuction();
 }
 
+// Quick Bid (for auto-bid buttons)
+function quickBidTeam(teamId) {
+    teamBid(teamId);
+}
 
+// Remove Player
+function removePlayer(id) {
+    players = players.filter(p => p.id !== id);
+    saveData();
+    renderPlayerList();
+    updateStats();
+}
+
+// Remove Team
+function removeTeam(id) {
+    teams = teams.filter(t => t.id !== id);
+    saveData();
+    renderTeamList();
+    updateStats();
+}
 
 // Undo Last Bid
 function undoBid() {
@@ -558,20 +613,47 @@ function clearTeamForm() {
     document.getElementById('teamName').focus();
 }
 
-// Save Data
+// Save Data to Firebase
 function saveData() {
-    localStorage.setItem('cricketPlayers', JSON.stringify(players));
-    localStorage.setItem('cricketTeams', JSON.stringify(teams));
-    localStorage.setItem('cricketSold', JSON.stringify(soldPlayers));
-    localStorage.setItem('cricketUnsold', JSON.stringify(unsoldPlayers));
+    set(ref(database, 'cricketApp'), {
+        players,
+        teams,
+        soldPlayers,
+        unsoldPlayers
+    }).catch((error) => {
+        console.error('Error saving to Firebase:', error);
+    });
 }
 
 // Render All
+function attachStaticEventHandlers() {
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.onclick = () => {
+            const txt = btn.textContent.trim().toLowerCase();
+            if (txt.includes('home')) switchPage('home');
+            else if (txt.includes('player')) switchPage('players');
+            else if (txt.includes('team')) switchPage('teams');
+            else if (txt.includes('auction')) switchPage('auction');
+            else if (txt.includes('summary')) switchPage('summary');
+        };    
+    });
+
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.onclick = () => {
+            const txt = btn.textContent.trim().toLowerCase();
+            if (txt.includes('sold')) switchSummaryTab('sold');
+            else if (txt.includes('unsold')) switchSummaryTab('unsold');
+            else if (txt.includes('team')) switchSummaryTab('teams');
+        };
+    });
+}
+
 function renderAll() {
     renderPlayerList();
     renderTeamList();
     renderAuction();
     updateStats();
+    attachStaticEventHandlers();
 }
 
 // Render Player List
@@ -1005,6 +1087,31 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+// Expose functions globally for inline onclick handlers
+window.initializeData = initializeData;
+window.switchPage = switchPage;
+window.switchSummaryTab = switchSummaryTab;
+window.getNextPlayer = getNextPlayer;
+window.teamBid = teamBid;
+window.quickBidTeam = quickBidTeam;
+window.undoBid = undoBid;
+window.sellPlayer = sellPlayer;
+window.showSaleModal = showSaleModal;
+window.closeSaleModal = closeSaleModal;
+window.addPlayer = addPlayer;
+window.clearPlayerForm = clearPlayerForm;
+window.addTeam = addTeam;
+window.clearTeamForm = clearTeamForm;
+window.editPlayer = editPlayer;
+window.updatePlayer = updatePlayer;
+window.editTeam = editTeam;
+window.updateTeam = updateTeam;
+window.removePlayer = removePlayer;
+window.removeTeam = removeTeam;
+window.printSummary = printSummary;
+window.downloadPlayersCSV = downloadPlayersCSV;
+window.resetAuction = resetAuction;
 
 // Initialize on load
 window.addEventListener('DOMContentLoaded', function() {
