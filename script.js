@@ -13,9 +13,7 @@ let currentBid = 0;
 let currentBidder = null;
 let bidHistory = []; // For undo functionality
 
-// Timer variables
-let auctionTimer = null;
-let timeRemaining = 20; // 20 seconds
+
 
 // Firebase config
 const firebaseConfig = {
@@ -89,10 +87,7 @@ function switchPage(pageName) {
         navBar.style.display = (pageName === 'auction' ? 'none' : 'flex');
     }
 
-    // Stop auction timer when leaving auction page
-    if (pageName !== 'auction') {
-        stopAuctionTimer();
-    }
+
 
     // Show selected page
     const targetPage = document.getElementById(pageName);
@@ -165,43 +160,7 @@ function getNextBidAmount(currentAmount) {
     }
 }
 
-// Timer Functions
-function startAuctionTimer() {
-    clearInterval(auctionTimer);
-    timeRemaining = 20;
 
-    auctionTimer = setInterval(() => {
-        timeRemaining--;
-
-        // Update timer display
-        updateTimerDisplay();
-
-        if (timeRemaining <= 0) {
-            clearInterval(auctionTimer);
-            // Auto-sell if there's a current bidder
-            if (currentBidder) {
-                sellPlayer();
-            } else {
-                // If no bidder, auto-sell at base price
-                sellPlayer();
-            }
-        }
-    }, 1000);
-}
-
-function stopAuctionTimer() {
-    clearInterval(auctionTimer);
-    timeRemaining = 20;
-    updateTimerDisplay();
-}
-
-function updateTimerDisplay() {
-    const timerElement = document.getElementById('auctionTimer');
-    if (timerElement) {
-        timerElement.textContent = timeRemaining;
-        timerElement.style.color = timeRemaining <= 5 ? '#ff4757' : timeRemaining <= 10 ? '#ffa726' : '#2ed573';
-    }
-}
 
 // Add Player
 function addPlayer() {
@@ -409,10 +368,7 @@ function getNextPlayer() {
     currentBidder = null;
     bidHistory = [];
 
-    // Stop any existing timer and start fresh
-    stopAuctionTimer();
-    // Start timer for bidding
-    startAuctionTimer();
+
 
     renderAuction();
 }
@@ -446,8 +402,7 @@ function teamBid(teamId) {
         currentBidder = { id: teamId, name: team.name };
     }
 
-    // Start/restart the auction timer
-    startAuctionTimer();
+
 
     renderAuction();
 }
@@ -487,8 +442,7 @@ function undoBid() {
 
     console.log('Undid bid, currentBid:', currentBid, 'currentBidder:', currentBidder);
 
-    // Restart timer after undo
-    startAuctionTimer();
+
 
     renderAuction();
 }
@@ -579,7 +533,6 @@ function closeSaleModal() {
 
 // Show Auction Complete
 function showAuctionComplete() {
-    stopAuctionTimer();
     const container = document.getElementById('auctionContainer');
     container.innerHTML = `
         <div class="empty-state" style="padding: 60px 20px;">
@@ -851,57 +804,62 @@ function renderAuction() {
     container.innerHTML = `
         <div class="current-auction">
             <button class="btn-secondary" style="margin-bottom:15px;" onclick="switchPage('home')">🏠 Back to Home</button>
-            <div class="player-profile">
-                <div class="player-image-large">
-                    <img src="${currentAuctionPlayer.imageUrl}" alt="${currentAuctionPlayer.name}" onerror="this.src='https://via.placeholder.com/180x240/667eea/ffffff?text=Player'" />
+            
+            <div style="display: flex; gap: 20px; margin-bottom: 25px;">
+                <!-- Left Side: Player Image (30%) -->
+                <div style="flex: 0 0 30%; display: flex; align-items: flex-start; justify-content: center;">
+                    <div class="player-image-large">
+                        <img src="${currentAuctionPlayer.imageUrl}" alt="${currentAuctionPlayer.name}" onerror="this.src='https://via.placeholder.com/180x240/667eea/ffffff?text=Player'" />
+                    </div>
                 </div>
-                <div class="player-info-large">
-                    <div class="auction-player-name">${currentAuctionPlayer.name}</div>
-                    <div class="player-rating">⭐ ${currentAuctionPlayer.overallRating}/10</div>
-                    <div class="auction-timer" style="margin-top: 10px; font-size: 18px; font-weight: bold;">
-                        Time: <span id="auctionTimer">${timeRemaining}</span>s
+                
+                <!-- Right Side: All Details (70%) -->
+                <div style="flex: 0 0 70%;">
+                    <div class="player-info-large">
+                        <div class="auction-player-name">${currentAuctionPlayer.name}</div>
+                        <div class="player-rating">⭐ ${currentAuctionPlayer.overallRating}/10</div>
+                    </div>
+                    
+                    <div class="auction-details">
+                        <div class="detail-box">
+                            <div class="detail-label">Role</div>
+                            <div class="detail-value">${currentAuctionPlayer.role}</div>
+                        </div>
+                        <div class="detail-box">
+                            <div class="detail-label">Category</div>
+                            <div class="detail-value">Cat ${currentAuctionPlayer.category}</div>
+                        </div>
+                        <div class="detail-box">
+                            <div class="detail-label">Batting Style</div>
+                            <div class="detail-value">${currentAuctionPlayer.battingStyle}</div>
+                        </div>
+                        <div class="detail-box">
+                            <div class="detail-label">Batting Order</div>
+                            <div class="detail-value">${currentAuctionPlayer.battingOrder}</div>
+                        </div>
+                        <div class="detail-box">
+                            <div class="detail-label">Bowling Style</div>
+                            <div class="detail-value">${currentAuctionPlayer.bowlingStyle}</div>
+                        </div>
+                        <div class="detail-box">
+                            <div class="detail-label">Base Price</div>
+                            <div class="detail-value">₹${currentAuctionPlayer.basePrice}</div>
+                        </div>
+                        <div class="detail-box">
+                            <div class="detail-label">Current Bid</div>
+                            <div class="detail-value" style="color: #667eea; font-size: 24px;">₹${currentBid}</div>
+                        </div>
+                    </div>
+
+                    <div class="auction-details">
+                        <div class="detail-box">
+                            <div class="detail-label">Highest Bidder</div>
+                            ${bidderInfo}
+                        </div>
                     </div>
                 </div>
             </div>
             
-            <div class="auction-details">
-                <div class="detail-box">
-                    <div class="detail-label">Role</div>
-                    <div class="detail-value">${currentAuctionPlayer.role}</div>
-                </div>
-                <div class="detail-box">
-                    <div class="detail-label">Category</div>
-                    <div class="detail-value">Cat ${currentAuctionPlayer.category}</div>
-                </div>
-                <div class="detail-box">
-                    <div class="detail-label">Batting Style</div>
-                    <div class="detail-value">${currentAuctionPlayer.battingStyle}</div>
-                </div>
-                <div class="detail-box">
-                    <div class="detail-label">Batting Order</div>
-                    <div class="detail-value">${currentAuctionPlayer.battingOrder}</div>
-                </div>
-                <div class="detail-box">
-                    <div class="detail-label">Bowling Style</div>
-                    <div class="detail-value">${currentAuctionPlayer.bowlingStyle}</div>
-                </div>
-                <div class="detail-box">
-                    <div class="detail-label">Base Price</div>
-                    <div class="detail-value">₹${currentAuctionPlayer.basePrice}</div>
-                </div>
-                <div class="detail-box">
-                    <div class="detail-label">Current Bid</div>
-                    <div class="detail-value" style="color: #667eea; font-size: 24px;">₹${currentBid}</div>
-                </div>
-            </div>
-
-            <div class="auction-details">
-                <div class="detail-box">
-                    <div class="detail-label">Highest Bidder</div>
-                    ${bidderInfo}
-                </div>
-            </div>
-
             <div class="bidding-section">
                 <div style="margin-bottom: 15px;">
                     <label style="font-weight: 700; color: #333; margin-bottom: 10px; display: block;">Click Team Name to Bid:</label>
