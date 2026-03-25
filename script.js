@@ -151,12 +151,14 @@ function switchSummaryTab(tabName) {
 
 // Get next bid amount based on current bid
 function getNextBidAmount(currentAmount) {
-    if (currentAmount < 200) {
+    if (currentAmount < 50) {
+        return currentAmount + 2.5;
+    } else if (currentAmount < 100) {
+        return currentAmount + 5;
+    } else if (currentAmount < 200) {
         return currentAmount + 10;
-    } else if (currentAmount < 500) {
-        return currentAmount + 25;
     } else {
-        return currentAmount + 100;
+        return currentAmount + 25;
     }
 }
 
