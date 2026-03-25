@@ -535,6 +535,17 @@ function closeSaleModal() {
 
 // Show Auction Complete
 function showAuctionComplete() {
+    // Move any remaining players to unsold
+    unsoldPlayers = players.map(p => ({
+        playerName: p.name,
+        role: p.role,
+        category: p.category,
+        basePrice: p.basePrice,
+        imageUrl: p.imageUrl
+    }));
+    players = [];
+    saveData();
+    
     const container = document.getElementById('auctionContainer');
     container.innerHTML = `
         <div class="empty-state" style="padding: 60px 20px;">
