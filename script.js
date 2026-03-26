@@ -40,10 +40,15 @@ function initializeData() {
     get(child(ref(database), 'cricketApp')).then((snapshot) => {
         if (snapshot.exists()) {
             const data = snapshot.val();
-            players = data.players || [];
-            teams = data.teams || [];
-            soldPlayers = data.soldPlayers || [];
-            unsoldPlayers = data.unsoldPlayers || [];
+            players = Array.isArray(data.players) ? data.players : [];
+            soldPlayers = Array.isArray(data.soldPlayers) ? data.soldPlayers : [];
+            unsoldPlayers = Array.isArray(data.unsoldPlayers) ? data.unsoldPlayers : [];
+            teams = Array.isArray(data.teams) ? data.teams.map(team => ({
+                ...team,
+                players: Array.isArray(team.players) ? team.players : [],
+                spentAmount: Number(team.spentAmount) || 0,
+                logoUrl: team.logoUrl || 'https://via.placeholder.com/80x80/667eea/ffffff?text=Logo'
+            })) : [];
         } else {
             players = [];
             teams = [];
@@ -700,7 +705,7 @@ function renderTeamList() {
                 </div>
                 <div class="team-stat">
                     <span class="team-stat-label">Players:</span>
-                    <span class="team-stat-value">${team.players.length}</span>
+                    <span class="team-stat-value">${(team.players || []).length}</span>
                 </div>
                 <div class="team-stat">
                     <span class="team-stat-label">Budget:</span>
@@ -745,7 +750,7 @@ function renderSummaryTeams() {
                 </div>
                 <div class="team-stat" style="position: relative; z-index: 2;">
                     <span class="team-stat-label">Players Bought:</span>
-                    <span class="team-stat-value">${team.players.length}</span>
+                    <span class="team-stat-value">${(team.players || []).length}</span>
                 </div>
                 <div class="team-stat" style="position: relative; z-index: 2;">
                     <span class="team-stat-label">Total Budget:</span>
