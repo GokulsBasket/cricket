@@ -1063,109 +1063,164 @@ function renderAuction() {
         return;
     }
 
-    const bidderInfo = currentBidder ? 
-        (() => {
-            const bidderTeam = teams.find(t => t.id === currentBidder.id);
-            return `<div class="bidder-info">
-                <img class="bidder-logo" src="${bidderTeam?.logoUrl || 'https://via.placeholder.com/45x45/667eea/ffffff?text=Logo'}" alt="${currentBidder.name} logo" />
-                <div class="bidder-team-name">${currentBidder.name}</div>
-            </div>`;
-        })() 
-        : '<div class="detail-value" style="color: #999;">No bids yet</div>';
+    const bidderTeam = teams.find(t => t.id === currentBidder?.id);
+    const bidderInfo = currentBidder ? `
+        <div class="activity-item">
+            <div class="activity-title">Highest Bidder</div>
+            <div class="activity-value">${currentBidder.name}</div>
+        </div>
+    ` : `
+        <div class="activity-item">
+            <div class="activity-title">Highest Bidder</div>
+            <div class="activity-value muted">No bids yet</div>
+        </div>
+    `;
 
-    // Get top 3 teams by budget available
-    const availableTeams = teams.filter(t => (t.budget - t.spentAmount) > currentBid).slice(0, 3);
+    const auctionStatHtml = `
+        <div class="auction-stat-card">
+            <div class="stat-label">Current Bid</div>
+            <div class="stat-value">₹${currentBid.toLocaleString()}</div>
+        </div>
+        <div class="auction-stat-card">
+            <div class="stat-label">Team in Lead</div>
+            <div class="stat-value">${currentBidder ? currentBidder.name : 'No leader'}</div>
+        </div>
+        <div class="auction-stat-card">
+            <div class="stat-label">Player Category</div>
+            <div class="stat-value">Cat ${currentAuctionPlayer.category}</div>
+        </div>
+    `;
 
-    let quickBidsHtml = '';
-    if (availableTeams.length > 0) {
-        quickBidsHtml = `
-            <div class="bid-buttons">
-                ${availableTeams.map(team => `
-                    <button class="btn-increment" onclick="quickBidTeam(${team.id})">${team.name}</button>
-                `).join('')}
+    const teamOverviewHtml = teams.map(team => {
+        const remaining = team.budget - team.spentAmount;
+        const teamPlayers = team.players?.length || 0;
+        return `
+            <div class="team-overview-card">
+                <img class="team-logo-small" src="${team.logoUrl}" alt="${team.name} logo" onerror="this.src='https://via.placeholder.com/60x60/8b5cf6/ffffff?text=🏏'" />
+                <div class="team-overview-title">${team.name}</div>
+                <div class="team-overview-sub">Funds left</div>
+                <div class="team-overview-value">₹${remaining.toLocaleString()}</div>
+                <div class="team-overview-meta">${teamPlayers}/25 players</div>
             </div>
         `;
+    }).join('');
+
+    const activityItems = [];
+    if (currentBidder) {
+        activityItems.push(`
+            <div class="activity-row">
+                <div>Highest Bid</div>
+                <strong>₹${currentBid.toLocaleString()}</strong>
+            </div>
+        `);
     }
+    activityItems.push(`
+        <div class="activity-row">
+            <div>Players remaining</div>
+            <strong>${players.length}</strong>
+        </div>
+    `);
+    activityItems.push(`
+        <div class="activity-row">
+            <div>Base Price</div>
+            <strong>₹${currentAuctionPlayer.basePrice.toLocaleString()}</strong>
+        </div>
+    `);
 
     const playersLeft = players.length;
     container.innerHTML = `
-        <div class="current-auction">
-            <button class="btn-secondary" style="margin-bottom:15px;" onclick="switchPage('home')">🏠 Back to Home</button>
-            <div style="margin-bottom: 15px; color: #444; font-size: 16px; font-weight: 600;">Players Left in Auction: ${playersLeft}</div>
-            <div style="display: flex; gap: 20px; margin-bottom: 25px;">
-                <!-- Left Side: Player Image (30%) -->
-                <div style="flex: 0 0 30%; display: flex; align-items: flex-start;">
-                    <div class="player-image-large">
-                        <img src="${currentAuctionPlayer.imageUrl}" alt="${currentAuctionPlayer.name}" onerror="this.src='https://via.placeholder.com/180x240/667eea/ffffff?text=Player'" />
-                    </div>
-                </div>
-                
-                <!-- Right Side: All Details (70%) -->
-                <div style="flex: 0 0 70%;">
-                    <div class="player-info-large">
-                        <div class="auction-player-name">${currentAuctionPlayer.name}</div>
-                        <div class="player-rating">⭐ ${currentAuctionPlayer.overallRating}/10</div>
-                    </div>
-                    
-                    <div class="auction-details">
-                        <div class="detail-box">
-                            <div class="detail-label">Role</div>
-                            <div class="detail-value">${currentAuctionPlayer.role}</div>
+        <div class="auction-grid">
+            <div class="auction-main-panel">
+                <div class="auction-panel auction-card-top">
+                    <div class="auction-section-head">
+                        <div>
+                            <div class="auction-heading">Player on Auction</div>
+                            <div class="auction-subtitle">${currentAuctionPlayer.name} • ${currentAuctionPlayer.role}</div>
                         </div>
-                        <div class="detail-box">
-                            <div class="detail-label">Category</div>
-                            <div class="detail-value">Cat ${currentAuctionPlayer.category}</div>
-                        </div>
-                        <div class="detail-box">
-                            <div class="detail-label">Batting Style</div>
-                            <div class="detail-value">${currentAuctionPlayer.battingStyle}</div>
-                        </div>
-                        <div class="detail-box">
-                            <div class="detail-label">Batting Order</div>
-                            <div class="detail-value">${currentAuctionPlayer.battingOrder}</div>
-                        </div>
-                        <div class="detail-box">
-                            <div class="detail-label">Bowling Style</div>
-                            <div class="detail-value">${currentAuctionPlayer.bowlingStyle}</div>
-                        </div>
-                        <div class="detail-box">
-                            <div class="detail-label">Base Price</div>
-                            <div class="detail-value">₹${currentAuctionPlayer.basePrice}</div>
-                        </div>
-                        <div class="detail-box">
-                            <div class="detail-label">Current Bid</div>
-                            <div class="detail-value" style="color: #667eea; font-size: 24px;">₹${currentBid}</div>
-                        </div>
+                        <div class="auction-badge">${playersLeft} left</div>
                     </div>
 
-                    <div class="auction-details">
-                        <div class="detail-box">
-                            <div class="detail-label">Highest Bidder</div>
-                            ${bidderInfo}
+                    <div class="auction-player-row">
+                        <div class="auction-player-image">
+                            <img src="${currentAuctionPlayer.imageUrl}" alt="${currentAuctionPlayer.name}" onerror="this.src='https://via.placeholder.com/260x320/8b5cf6/ffffff?text=Player'" />
                         </div>
+                        <div class="auction-player-details">
+                            <div class="auction-detail-block">
+                                <span class="detail-label">Name</span>
+                                <span class="detail-value">${currentAuctionPlayer.name}</span>
+                            </div>
+                            <div class="auction-detail-block">
+                                <span class="detail-label">Rating</span>
+                                <span class="detail-value">⭐ ${currentAuctionPlayer.overallRating}/10</span>
+                            </div>
+                            <div class="auction-detail-grid">
+                                <div class="auction-detail-box"><strong>Role</strong><span>${currentAuctionPlayer.role}</span></div>
+                                <div class="auction-detail-box"><strong>Category</strong><span>Cat ${currentAuctionPlayer.category}</span></div>
+                                <div class="auction-detail-box"><strong>Batting</strong><span>${currentAuctionPlayer.battingStyle}</span></div>
+                                <div class="auction-detail-box"><strong>Bowling</strong><span>${currentAuctionPlayer.bowlingStyle}</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="auction-panel auction-stats-panel">
+                    <div class="auction-stats-grid">
+                        ${auctionStatHtml}
+                    </div>
+                </div>
+
+                <div class="auction-panel team-overview-panel">
+                    <div class="auction-section-head">
+                        <div>
+                            <div class="auction-heading">Teams Overview</div>
+                            <div class="auction-subtitle">Funds remaining & total players bought</div>
+                        </div>
+                        <button class="btn-secondary" onclick="switchPage('teams')">View All Teams</button>
+                    </div>
+                    <div class="team-overview-grid">
+                        ${teamOverviewHtml}
                     </div>
                 </div>
             </div>
-            
-            <div class="bidding-section">
-                <div style="margin-bottom: 15px;">
-                    <label style="font-weight: 700; color: #333; margin-bottom: 10px; display: block;">Click Team Name to Bid:</label>
-                    <div class="team-bid-grid">
-                        ${teams.filter(t => (t.budget - t.spentAmount) > currentBid).map(team => `
-                            <button class="team-bid-btn ${currentBidder?.id === team.id ? 'active' : ''}" 
-                                    onclick="teamBid(${team.id})"
-                                    data-team-id="${team.id}">
-                                <div class="team-bid-name">${team.name}</div>
-                                <div class="team-bid-budget">₹${(team.budget - team.spentAmount).toLocaleString()} left</div>
+
+            <div class="auction-side-panel">
+                <div class="auction-panel auction-actions-panel">
+                    <div class="auction-section-head">
+                        <div>
+                            <div class="auction-heading">Actions</div>
+                            <div class="auction-subtitle">Bid quickly or pass to keep the auction hot.</div>
+                        </div>
+                    </div>
+                    <div class="auction-actions-list">
+                        ${teams.map(team => `
+                            <button class="team-bid-preview ${currentBidder?.id === team.id ? 'active' : ''}" onclick="teamBid(${team.id})">
+                                <div>${team.name}</div>
+                                <div>₹${(team.budget - team.spentAmount).toLocaleString()} left</div>
                             </button>
                         `).join('')}
                     </div>
+                    <div class="auction-button-row">
+                        <button class="btn-undo" onclick="undoBid()" ${bidHistory.length === 0 ? 'disabled' : ''}>↶ Undo</button>
+                        <button class="btn-secondary" onclick="passPlayer()">PASS</button>
+                        <button class="btn-primary" onclick="sellPlayer()">BID +20L</button>
+                    </div>
                 </div>
 
-                <div class="auction-actions">
-                    <button class="btn-undo" onclick="undoBid()" ${bidHistory.length === 0 ? 'disabled' : ''}>↶ Undo</button>
-                    <button class="btn-secondary" onclick="passPlayer()">⏭ Pass</button>
-                    <button class="btn-primary" onclick="sellPlayer()">✓ Sold!</button>
+                <div class="auction-panel auction-activity-panel">
+                    <div class="auction-section-head">
+                        <div>
+                            <div class="auction-heading">Live Activity</div>
+                            <div class="auction-subtitle">Recent bid summary and auction updates.</div>
+                        </div>
+                    </div>
+                    <div class="activity-list">
+                        ${activityItems.join('')}
+                        ${bidderInfo}
+                        <div class="activity-row">
+                            <div>Current Bid Team</div>
+                            <strong>${bidderTeam?.name ?? 'No team'}</strong>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
