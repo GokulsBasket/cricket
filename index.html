@@ -77,84 +77,12 @@
         <!-- PLAYERS PAGE -->
         <div id="players" class="page">
             <div class="card">
-                <h2>Manage Players</h2>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Player Name</label>
-                        <input type="text" id="playerName" placeholder="Enter player name">
+                <div class="page-header">
+                    <div>
+                        <h2>Player Management</h2>
+                        <p class="page-subtitle">Open the player form in a beautiful sky-blue modal.</p>
                     </div>
-                    <div class="form-group">
-                        <label>Role</label>
-                        <select id="playerRole">
-                            <option value="Batsman">Batsman</option>
-                            <option value="Bowler">Bowler</option>
-                            <option value="All-rounder">All-rounder</option>
-                            <option value="Wicket-keeper">Wicket-keeper</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Batting Style</label>
-                        <select id="battingStyle">
-                            <option value="Right-handed">Right-handed</option>
-                            <option value="Left-handed">Left-handed</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Batting Order</label>
-                        <select id="battingOrder">
-                            <option value="Opener">Opener</option>
-                            <option value="Middle Order">Middle Order</option>
-                            <option value="Lower Order">Lower Order</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Bowling Style</label>
-                        <select id="bowlingStyle">
-                            <option value="Right-arm Fast">Right-arm Fast</option>
-                            <option value="Right-arm Medium">Right-arm Medium</option>
-                            <option value="Left-arm Fast">Left-arm Fast</option>
-                            <option value="Left-arm Medium">Left-arm Medium</option>
-                            <option value="Off-spinner">Off-spinner</option>
-                            <option value="Leg-spinner">Leg-spinner</option>
-                            <option value="N/A">N/A</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Overall Rating (1-10)</label>
-                        <input type="number" id="overallRating" min="1" max="10" placeholder="Enter rating">
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Player Image URL</label>
-                        <input type="url" id="playerImage" placeholder="Enter image URL">
-                    </div>
-                    <div class="form-group">
-                        <label>Category</label>
-                        <select id="playerCategory">
-                            <option value="A">Category A (Premium)</option>
-                            <option value="B">Category B (Mid)</option>
-                            <option value="C">Category C (Budget)</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Base Price (₹)</label>
-                    <input type="number" id="playerPrice" placeholder="Enter base price">
-                </div>
-
-                <div class="button-group">
-                    <button class="btn-primary" onclick="addPlayer()">Add Player</button>
-                    <button class="btn-secondary" onclick="clearPlayerForm()">Clear</button>
+                    <button class="btn-primary" onclick="openAddPlayerModal()">+ Add Player</button>
                 </div>
 
                 <div id="playerList" style="margin-top: 20px;">
@@ -168,33 +96,12 @@
         <!-- TEAMS PAGE -->
         <div id="teams" class="page">
             <div class="card">
-                <h2>Manage Teams</h2>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Team Name</label>
-                        <input type="text" id="teamName" placeholder="Enter team name">
+                <div class="page-header">
+                    <div>
+                        <h2>Team Management</h2>
+                        <p class="page-subtitle">Add or edit teams with a clean modal entry experience.</p>
                     </div>
-                    <div class="form-group">
-                        <label>Team Owner</label>
-                        <input type="text" id="teamOwner" placeholder="Enter team owner">
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Budget (₹)</label>
-                        <input type="number" id="teamBudget" placeholder="Enter team budget">
-                    </div>
-                    <div class="form-group">
-                        <label>Team Logo URL</label>
-                        <input type="url" id="teamLogo" placeholder="Enter team logo URL">
-                    </div>
-                </div>
-
-                <div class="button-group">
-                    <button class="btn-primary" onclick="addTeam()">Add Team</button>
-                    <button class="btn-secondary" onclick="clearTeamForm()">Clear</button>
+                    <button class="btn-primary" onclick="openAddTeamModal()">+ Add Team</button>
                 </div>
 
                 <div id="teamsList" style="margin-top: 20px;">
@@ -250,6 +157,127 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="addPlayerModal" class="modal">
+        <div class="modal-content modal-large">
+            <span class="close-modal" onclick="closeAddPlayerModal()">&times;</span>
+            <h3 id="playerModalTitle">Add Player</h3>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Player Name</label>
+                    <input type="text" id="playerName" placeholder="Enter player name">
+                </div>
+                <div class="form-group">
+                    <label>Role</label>
+                    <select id="playerRole">
+                        <option value="Batsman">Batsman</option>
+                        <option value="Bowler">Bowler</option>
+                        <option value="All-rounder">All-rounder</option>
+                        <option value="Wicket-keeper">Wicket-keeper</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Batting Style</label>
+                    <select id="battingStyle">
+                        <option value="Right-handed">Right-handed</option>
+                        <option value="Left-handed">Left-handed</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Batting Order</label>
+                    <select id="battingOrder">
+                        <option value="Opener">Opener</option>
+                        <option value="Middle Order">Middle Order</option>
+                        <option value="Lower Order">Lower Order</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Bowling Style</label>
+                    <select id="bowlingStyle">
+                        <option value="Right-arm Fast">Right-arm Fast</option>
+                        <option value="Right-arm Medium">Right-arm Medium</option>
+                        <option value="Left-arm Fast">Left-arm Fast</option>
+                        <option value="Left-arm Medium">Left-arm Medium</option>
+                        <option value="Off-spinner">Off-spinner</option>
+                        <option value="Leg-spinner">Leg-spinner</option>
+                        <option value="N/A">N/A</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Overall Rating (1-10)</label>
+                    <input type="number" id="overallRating" min="1" max="10" placeholder="Enter rating">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Player Image URL</label>
+                    <input type="url" id="playerImage" placeholder="Enter image URL">
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="playerCategory">
+                        <option value="A">Category A (Premium)</option>
+                        <option value="B">Category B (Mid)</option>
+                        <option value="C">Category C (Budget)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Base Price (₹)</label>
+                <input type="number" id="playerPrice" placeholder="Enter base price">
+            </div>
+
+            <div class="button-group modal-actions">
+                <button id="playerModalSubmitButton" class="btn-primary" onclick="submitPlayerForm()">Add Player</button>
+                <button class="btn-secondary" onclick="clearPlayerForm()">Clear</button>
+                <button class="btn-secondary" onclick="closeAddPlayerModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="addTeamModal" class="modal">
+        <div class="modal-content modal-large">
+            <span class="close-modal" onclick="closeAddTeamModal()">&times;</span>
+            <h3 id="teamModalTitle">Add Team</h3>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Team Name</label>
+                    <input type="text" id="teamName" placeholder="Enter team name">
+                </div>
+                <div class="form-group">
+                    <label>Team Owner</label>
+                    <input type="text" id="teamOwner" placeholder="Enter team owner">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Budget (₹)</label>
+                    <input type="number" id="teamBudget" placeholder="Enter team budget">
+                </div>
+                <div class="form-group">
+                    <label>Team Logo URL</label>
+                    <input type="url" id="teamLogo" placeholder="Enter team logo URL">
+                </div>
+            </div>
+
+            <div class="button-group modal-actions">
+                <button id="teamModalSubmitButton" class="btn-primary" onclick="submitTeamForm()">Add Team</button>
+                <button class="btn-secondary" onclick="clearTeamForm()">Clear</button>
+                <button class="btn-secondary" onclick="closeAddTeamModal()">Cancel</button>
             </div>
         </div>
     </div>
