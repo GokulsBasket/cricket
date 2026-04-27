@@ -12,6 +12,8 @@ let currentAuctionPlayer = null;
 let currentBid = 0;
 let currentBidder = null;
 let bidHistory = []; // For undo functionality
+let editingPlayerId = null;
+let editingTeamId = null;
 
 
 
@@ -1008,6 +1010,13 @@ function renderSummaryTeams() {
     teams.forEach(team => {
         const remaining = team.budget - team.spentAmount;
         const playerCount = (team.players || []).length;
+        const playerItems = (team.players || []).map(player => `
+            <div class="team-player-chip">
+                <span>${player.name}</span>
+                <strong>₹${player.price.toLocaleString()}</strong>
+            </div>
+        `).join('');
+
         html += `
             <div class="summary-card">
                 <img class="summary-card-logo" src="${team.logoUrl}" alt="${team.name} logo" onerror="this.src='https://via.placeholder.com/80x80/8b5cf6/ffffff?text=🏏'" />
@@ -1019,6 +1028,7 @@ function renderSummaryTeams() {
                         <span>Left ₹${remaining.toLocaleString()}</span>
                     </div>
                     <div class="summary-card-text">${playerCount > 0 ? `Top picks are ready!` : `No players bought yet—draft quickly.`}</div>
+                    ${playerCount > 0 ? `<div class="team-player-list">${playerItems}</div>` : ''}
                 </div>
             </div>
         `;
