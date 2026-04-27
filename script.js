@@ -673,14 +673,6 @@ function releasePlayer(teamId, playerId = null, playerName = '') {
         status: 'available'
     };
 
-    unsoldPlayers.push({
-        playerName: restoredPlayer.name,
-        role: restoredPlayer.role,
-        category: restoredPlayer.category,
-        basePrice: restoredPlayer.basePrice,
-        imageUrl: restoredPlayer.imageUrl
-    });
-
     players.push(restoredPlayer);
 
     saveData();
