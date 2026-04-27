@@ -236,6 +236,52 @@ function addTeam() {
     updateStats();
 }
 
+function openAddPlayerModal() {
+    editingPlayerId = null;
+    document.getElementById('playerModalTitle').innerText = 'Add Player';
+    document.getElementById('playerModalSubmitButton').innerText = 'Add Player';
+    clearPlayerForm();
+    document.getElementById('addPlayerModal').classList.add('active');
+}
+
+function closeAddPlayerModal() {
+    document.getElementById('addPlayerModal').classList.remove('active');
+    editingPlayerId = null;
+    clearPlayerForm();
+}
+
+function submitPlayerForm() {
+    if (editingPlayerId) {
+        updatePlayer(editingPlayerId);
+    } else {
+        addPlayer();
+    }
+    closeAddPlayerModal();
+}
+
+function openAddTeamModal() {
+    editingTeamId = null;
+    document.getElementById('teamModalTitle').innerText = 'Add Team';
+    document.getElementById('teamModalSubmitButton').innerText = 'Add Team';
+    clearTeamForm();
+    document.getElementById('addTeamModal').classList.add('active');
+}
+
+function closeAddTeamModal() {
+    document.getElementById('addTeamModal').classList.remove('active');
+    editingTeamId = null;
+    clearTeamForm();
+}
+
+function submitTeamForm() {
+    if (editingTeamId) {
+        updateTeam(editingTeamId);
+    } else {
+        addTeam();
+    }
+    closeAddTeamModal();
+}
+
 // Edit Player
 function editPlayer(id) {
     const player = players.find(p => p.id === id);
@@ -253,12 +299,10 @@ function editPlayer(id) {
     document.getElementById('playerImage').value = player.imageUrl;
 
     // Change button to update mode
-    const addBtn = document.querySelector('#players .btn-primary');
-    addBtn.textContent = 'Update Player';
-    addBtn.onclick = () => updatePlayer(id);
-
-    // Scroll to form
-    document.getElementById('players').scrollIntoView({ behavior: 'smooth' });
+    editingPlayerId = id;
+    document.getElementById('playerModalTitle').innerText = 'Update Player';
+    document.getElementById('playerModalSubmitButton').innerText = 'Update Player';
+    document.getElementById('addPlayerModal').classList.add('active');
 }
 
 // Update Player
@@ -300,9 +344,9 @@ function updatePlayer(id) {
     updateStats();
 
     // Reset button
-    const addBtn = document.querySelector('#players .btn-primary');
-    addBtn.textContent = 'Add Player';
-    addBtn.onclick = addPlayer;
+    editingPlayerId = null;
+    document.getElementById('playerModalTitle').innerText = 'Add Player';
+    document.getElementById('playerModalSubmitButton').innerText = 'Add Player';
 }
 
 // Edit Team
@@ -312,23 +356,25 @@ function editTeam(id) {
 
     // Populate form with team data
     document.getElementById('teamName').value = team.name;
+    document.getElementById('teamOwner').value = team.owner;
     document.getElementById('teamBudget').value = team.budget;
+    document.getElementById('teamLogo').value = team.logoUrl;
 
     // Change button to update mode
-    const addBtn = document.querySelector('#teams .btn-primary');
-    addBtn.textContent = 'Update Team';
-    addBtn.onclick = () => updateTeam(id);
-
-    // Scroll to form
-    document.getElementById('teams').scrollIntoView({ behavior: 'smooth' });
+    editingTeamId = id;
+    document.getElementById('teamModalTitle').innerText = 'Update Team';
+    document.getElementById('teamModalSubmitButton').innerText = 'Update Team';
+    document.getElementById('addTeamModal').classList.add('active');
 }
 
 // Update Team
 function updateTeam(id) {
     const name = document.getElementById('teamName').value.trim();
+    const owner = document.getElementById('teamOwner').value.trim();
     const budget = parseInt(document.getElementById('teamBudget').value);
+    const logo = document.getElementById('teamLogo').value.trim();
 
-    if (!name || !budget) {
+    if (!name || !owner || !budget) {
         alert('Please fill all fields');
         return;
     }
@@ -339,7 +385,9 @@ function updateTeam(id) {
     teams[teamIndex] = {
         ...teams[teamIndex],
         name,
-        budget
+        owner,
+        budget,
+        logoUrl: logo || 'https://via.placeholder.com/80x80/667eea/ffffff?text=Logo'
     };
 
     saveData();
@@ -349,9 +397,9 @@ function updateTeam(id) {
     updateStats();
 
     // Reset button
-    const addBtn = document.querySelector('#teams .btn-primary');
-    addBtn.textContent = 'Add Team';
-    addBtn.onclick = addTeam;
+    editingTeamId = null;
+    document.getElementById('teamModalTitle').innerText = 'Add Team';
+    document.getElementById('teamModalSubmitButton').innerText = 'Add Team';
 }
 
 // Get Random Player
@@ -1289,13 +1337,21 @@ window.getNextPlayer = getNextPlayer;
 window.teamBid = teamBid;
 window.quickBidTeam = quickBidTeam;
 window.undoBid = undoBid;
+window.passPlayer = passPlayer;
 window.sellPlayer = sellPlayer;
+window.releasePlayer = releasePlayer;
 window.showSaleModal = showSaleModal;
 window.closeSaleModal = closeSaleModal;
 window.addPlayer = addPlayer;
 window.clearPlayerForm = clearPlayerForm;
 window.addTeam = addTeam;
 window.clearTeamForm = clearTeamForm;
+window.openAddPlayerModal = openAddPlayerModal;
+window.closeAddPlayerModal = closeAddPlayerModal;
+window.submitPlayerForm = submitPlayerForm;
+window.openAddTeamModal = openAddTeamModal;
+window.closeAddTeamModal = closeAddTeamModal;
+window.submitTeamForm = submitTeamForm;
 window.editPlayer = editPlayer;
 window.updatePlayer = updatePlayer;
 window.editTeam = editTeam;
