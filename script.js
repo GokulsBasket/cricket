@@ -1193,6 +1193,14 @@ function renderAuction() {
                             <div class="auction-subtitle">Recent bid summary and auction updates.</div>
                         </div>
                     </div>
+                    <div class="activity-list">
+                        ${activityItems.join('')}
+                        ${bidderInfo}
+                        <div class="activity-row">
+                            <div>Current Bid Team</div>
+                            <strong>${bidderTeam?.name ?? 'No team'}</strong>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
