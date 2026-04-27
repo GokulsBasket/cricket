@@ -510,16 +510,9 @@ function passPlayer() {
 
     const player = currentAuctionPlayer;
 
-    unsoldPlayers.push({
-        playerName: player.name,
-        role: player.role,
-        category: player.category,
-        basePrice: player.basePrice,
-        imageUrl: player.imageUrl
-    });
-
-    // Remove the current player from auction and move to next sequential player
+    // Move the current player to the end of the auction queue so they can return later
     players = players.filter(p => p.id !== player.id);
+    players.push(player);
 
     currentAuctionPlayer = null;
     currentBid = 0;
@@ -1011,52 +1004,22 @@ function renderSummaryTeams() {
         return;
     }
 
-    let html = `<div class="team-grid">`;
+    let html = `<div class="summary-grid">`;
     teams.forEach(team => {
         const remaining = team.budget - team.spentAmount;
-        const categoryColor = remaining > team.budget * 0.5 ? 'category-a' : remaining > team.budget * 0.2 ? 'category-b' : 'category-c';
-
+        const playerCount = (team.players || []).length;
         html += `
-            <div class="team-card ${categoryColor}" style="background-image: linear-gradient(rgba(255,255,255,0.85), rgba(255,255,255,0.85)), url('${team.logoUrl}'); background-size: cover; background-position: center;">
-                <div class="team-overlay"></div>
-                <div class="team-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; position: relative; z-index: 2;">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <img class="team-logo" src="${team.logoUrl}" alt="${team.name} logo" onerror="this.src='https://via.placeholder.com/80x80/667eea/ffffff?text=Logo'" />
-                        <div>
-                            <div class="team-name">${team.name}</div>
-                            <div style="font-size: 13px; color: #555;">Owner: ${team.owner}</div>
-                        </div>
+            <div class="summary-card">
+                <img class="summary-card-logo" src="${team.logoUrl}" alt="${team.name} logo" onerror="this.src='https://via.placeholder.com/80x80/8b5cf6/ffffff?text=🏏'" />
+                <div class="summary-card-content">
+                    <div class="summary-card-title">${team.name} <span class="summary-card-badge">${playerCount} players</span></div>
+                    <div class="summary-card-text">Owner: ${team.owner} • Budget: ₹${team.budget.toLocaleString()}</div>
+                    <div class="summary-card-bar">
+                        <span>Spent ₹${team.spentAmount.toLocaleString()}</span>
+                        <span>Left ₹${remaining.toLocaleString()}</span>
                     </div>
+                    <div class="summary-card-text">${playerCount > 0 ? `Top picks are ready!` : `No players bought yet—draft quickly.`}</div>
                 </div>
-                <div class="team-stat" style="position: relative; z-index: 2;">
-                    <span class="team-stat-label">Players Bought:</span>
-                    <span class="team-stat-value">${(team.players || []).length}</span>
-                </div>
-                <div class="team-stat" style="position: relative; z-index: 2;">
-                    <span class="team-stat-label">Total Budget:</span>
-                    <span class="team-stat-value">₹${team.budget.toLocaleString()}</span>
-                </div>
-                <div class="team-budget" style="position: relative; z-index: 2;">
-                    <div class="budget-used">Total Spent: ₹${team.spentAmount.toLocaleString()}</div>
-                    <div style="color: ${remaining < 0 ? '#ff4757' : '#2ed573'}; font-weight: 600;">Remaining: ₹${remaining.toLocaleString()}</div>
-                </div>
-                ${team.players.length > 0 ? `
-                    <div style="margin-top: 15px; font-size: 12px; border-top: 1px solid #ddd; padding-top: 10px; position: relative; z-index: 2;">
-                        <div style="font-weight: 600; margin-bottom: 8px; color: #667eea;">Players:</div>
-                        ${team.players.map(p => `
-                            <div style="display:flex; align-items:center; gap:8px; margin-bottom: 6px; padding: 10px 8px; background: rgba(255,255,255,0.92); border-radius: 8px; justify-content: space-between;">
-                                <div style="display:flex; align-items:center; gap:8px; flex:1;">
-                                    <img src="${p.imageUrl || 'https://via.placeholder.com/60x80/667eea/ffffff?text=No+Img'}" alt="${p.name}" style="width:40px; height:50px; object-fit:cover; border-radius:4px; border:2px solid #667eea;" />
-                                    <div>
-                                        <strong>${p.name}</strong> (${p.role}) <br />
-                                        <span style="font-size:12px;">₹${p.price.toLocaleString()}</span>
-                                    </div>
-                                </div>
-                                <button class="btn-secondary" onclick="releasePlayer(${team.id}, ${p.playerId ?? 'null'}, '${(p.name || '').replace(/'/g, "\\'")}')">Release</button>
-                            </div>
-                        `).join('')}
-                    </div>
-                ` : `<div style="margin-top: 15px; font-size: 12px; color: #777; position: relative; z-index: 2;">No players yet.</div>`}
             </div>
         `;
     });
@@ -1076,8 +1039,9 @@ function renderAuction() {
         } else {
             container.innerHTML = `
                 <div class="empty-state" style="padding: 40px 20px;">
-                    <p style="font-size: 24px; margin-bottom: 20px;">Ready to start?</p>
-                    <button class="btn-primary" onclick="getNextPlayer()" style="width: 200px;">Get Next Player</button>
+                    <p style="font-size: 24px; margin-bottom: 20px;">Ready to start the auction? 🏏</p>
+                    <p style="margin-bottom: 16px; color: #f0e7ff;">Pass keeps the player back in the pool, so your squad stays clever.</p>
+                    <button class="btn-primary" onclick="getNextPlayer()" style="width: 220px;">Start Live Auction</button>
                 </div>
             `;
         }
