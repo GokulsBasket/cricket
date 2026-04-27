@@ -1067,19 +1067,6 @@ function renderAuction() {
         return;
     }
 
-    const bidderTeam = teams.find(t => t.id === currentBidder?.id);
-    const bidderInfo = currentBidder ? `
-        <div class="activity-item">
-            <div class="activity-title">Highest Bidder</div>
-            <div class="activity-value muted">${bidderTeam.name}</div>
-        </div>
-    ` : `
-        <div class="activity-item">
-            <div class="activity-title">Highest Bidder</div>
-            <div class="activity-value muted">No bids yet</div>
-        </div>
-    `;
-
     const auctionStatHtml = `
         <div class="auction-stat-card">
             <div class="stat-label">Current Bid</div>
