@@ -220,10 +220,10 @@
         <div id="summary" class="page">
             <div class="card">
                 <h2>Auction Summary</h2>
-                <div style="margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
-                    <button class="btn-primary" onclick="printSummary()" style="padding: 10px 20px;">Print Summary</button>
-                    <button class="btn-success" onclick="downloadPlayersCSV()" style="padding: 10px 20px;">Download Player List</button>
-                    <button class="btn-danger" onclick="resetAuction()" style="padding: 10px 20px;">Reset All Data</button>
+                <div class="summary-actions">
+                    <button class="btn-primary" onclick="printSummary()">Print Summary</button>
+                    <button class="btn-success" onclick="downloadPlayersCSV()">Download Player List</button>
+                    <button class="btn-danger" onclick="resetAuction()">Reset All Data</button>
                 </div>
                 <div class="tabs">
                     <button class="tab-btn active" onclick="switchSummaryTab('sold')">Sold Players</button>
