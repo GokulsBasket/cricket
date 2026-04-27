@@ -1071,9 +1071,7 @@ function renderAuction() {
     const bidderInfo = currentBidder ? `
         <div class="activity-item">
             <div class="activity-title">Highest Bidder</div>
-            <div class="activity-value bidder-logo-wrap">
-                <img class="bidder-logo-small" src="${bidderTeam?.logoUrl || 'https://via.placeholder.com/50x50/000000/ffffff?text=🏏'}" alt="${currentBidder.name} logo" onerror="this.src='https://via.placeholder.com/50x50/000000/ffffff?text=🏏'" />
-            </div>
+            <div class="activity-value muted">${bidderTeam.name}</div>
         </div>
     ` : `
         <div class="activity-item">
@@ -1091,6 +1089,13 @@ function renderAuction() {
             <div class="stat-label">Player Category</div>
             <div class="stat-value">Cat ${currentAuctionPlayer.category}</div>
         </div>
+         <div class="auction-stat-card">
+            <div class="stat-label">Highest Bidder</div>
+            <div class="stat-value">
+                <img class="bidder-logo-small" src="${bidderTeam?.logoUrl || 'https://via.placeholder.com/50x50/000000/ffffff?text=🏏'}" alt="${currentBidder.name} logo" onerror="this.src='https://via.placeholder.com/50x50/000000/ffffff?text=🏏'" />
+            </div>
+        </div>
+
     `;
 
     const activityItems = [];
