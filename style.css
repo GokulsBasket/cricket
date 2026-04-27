@@ -884,7 +884,8 @@ button:active {
   .hero-grid,
   .team-grid,
   .auction-details,
-  .team-bid-grid {
+  .team-bid-grid,
+  .player-category-grid {
     grid-template-columns: 1fr;
   }
 
@@ -894,5 +895,268 @@ button:active {
 
   .nav-btn {
     padding: 10px 16px;
+  }
+}
+
+/* New app-style overrides */
+body {
+  background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.24), transparent 18%),
+              radial-gradient(circle at bottom right, rgba(59, 130, 246, 0.18), transparent 22%),
+              linear-gradient(180deg, #071b33 0%, #0b2c52 40%, #081c34 100%);
+}
+
+body::before,
+body::after {
+  opacity: 1;
+}
+
+.navbar {
+  padding: 16px 22px;
+  background: rgba(8, 22, 55, 0.92);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  box-shadow: 0 28px 80px rgba(3, 9, 30, 0.48);
+}
+
+.nav-title {
+  font-size: clamp(24px, 2.2vw, 36px);
+  letter-spacing: 1px;
+  background: linear-gradient(135deg, #7dd3fc, #0ea5e9);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.nav-links {
+  gap: 12px;
+}
+
+.nav-btn {
+  background: rgba(255,255,255,0.08);
+  color: #e2efff;
+  border-color: rgba(56, 189, 248, 0.18);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
+}
+
+.nav-btn.active,
+.nav-btn:hover {
+  background: rgba(14, 165, 233, 0.95);
+  color: #ffffff;
+  border-color: rgba(14, 165, 233, 0.9);
+}
+
+.card,
+.auction-section,
+.team-card,
+.player-card,
+.modal-content {
+  background: rgba(6, 25, 58, 0.95) !important;
+  border-color: rgba(56, 189, 248, 0.18) !important;
+}
+
+.card {
+  padding: 28px;
+  border-radius: 30px;
+}
+
+.card h2 {
+  color: #eff6ff;
+  border-color: rgba(56, 189, 248, 0.22);
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.page-subtitle {
+  color: #cbd5e1;
+  margin-top: 8px;
+}
+
+.hero-card,
+.team-card,
+.player-card,
+.list-item {
+  border-radius: 26px;
+}
+
+.hero-item {
+  border: 1px solid rgba(56, 189, 248, 0.18);
+  min-height: 200px;
+}
+
+.hero-item:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 28px 70px rgba(8, 23, 60, 0.42);
+}
+
+button,
+.tab-btn {
+  font-size: 14px;
+  letter-spacing: 0.02em;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+  box-shadow: 0 18px 40px rgba(14, 165, 233, 0.26);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #0ea5e9, #3b82f6);
+}
+
+.btn-secondary {
+  background: rgba(255,255,255,0.1);
+  color: #e2efff;
+  border-color: rgba(148, 206, 255, 0.2);
+}
+
+.btn-secondary:hover {
+  background: rgba(255,255,255,0.16);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #22c55e, #14b8a6);
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #ef4444, #f97316);
+}
+
+.tab-btn {
+  min-width: 150px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.08);
+}
+
+.tab-btn.active {
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.95), rgba(59, 130, 246, 0.95));
+  color: #ffffff;
+  box-shadow: 0 18px 40px rgba(14,165,233,0.22);
+}
+
+.summary-actions {
+  justify-content: flex-start;
+}
+
+.tab-content {
+  padding: 18px 0;
+}
+
+.team-card {
+  padding: 26px;
+  min-height: 260px;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.team-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 24px 60px rgba(14, 165, 233, 0.18);
+}
+
+.player-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 180px;
+}
+
+.player-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.05), transparent 65%);
+  pointer-events: none;
+}
+
+.player-card:hover {
+  transform: translateY(-4px);
+}
+
+.player-actions button {
+  min-width: 100px;
+}
+
+.category-header {
+  background: rgba(10, 31, 68, 0.95);
+  border-color: rgba(56, 189, 248, 0.15);
+}
+
+.category-header h3 {
+  color: #dbeafe;
+}
+
+.category-header span {
+  color: #93c5fd;
+}
+
+.auction-section {
+  padding: 32px;
+  border: 1px solid rgba(56, 189, 248, 0.12);
+  box-shadow: 0 30px 90px rgba(8, 16, 42, 0.32);
+}
+
+.current-auction {
+  border-radius: 32px;
+  background: rgba(8, 22, 52, 0.98);
+  border: 1px solid rgba(56, 189, 248, 0.14);
+}
+
+.current-auction::before {
+  display: none;
+}
+
+.auction-player-name {
+  font-size: clamp(30px, 3vw, 44px);
+}
+
+.auction-details .detail-box {
+  background: rgba(255,255,255,0.08);
+}
+
+.team-bid-btn {
+  background: rgba(255,255,255,0.08);
+}
+
+.team-bid-btn:hover,
+.team-bid-btn.active {
+  background: rgba(14, 165, 233, 0.18);
+  border-color: rgba(14, 165, 233, 0.35);
+}
+
+.modal-content {
+  padding: 32px;
+  border-radius: 30px;
+  max-width: 720px;
+}
+
+.modal-content button {
+  min-width: 140px;
+}
+
+.modal-large {
+  width: min(720px, 100%);
+}
+
+@media (max-width: 980px) {
+  .player-card {
+    grid-template-columns: 1fr;
+  }
+
+  .player-image {
+    width: 100%;
+    min-width: auto;
+    height: 180px;
+  }
+
+  .player-actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .player-actions button {
+    width: auto;
   }
 }
