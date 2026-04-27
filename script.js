@@ -182,7 +182,7 @@ function addPlayer() {
     const imageUrl = document.getElementById('playerImage').value.trim();
 
     if (!name || !price || !overallRating) {
-        alert('Please fill all required fields');
+        showInfoModal('Please fill all required fields.', 'Validation Error');
         return;
     }
 
@@ -215,7 +215,7 @@ function addTeam() {
     const logo = document.getElementById('teamLogo').value.trim();
 
     if (!name || !owner || !budget) {
-        alert('Please fill all fields');
+        showInfoModal('Please fill all required fields.', 'Validation Error');
         return;
     }
 
@@ -318,7 +318,7 @@ function updatePlayer(id) {
     const imageUrl = document.getElementById('playerImage').value.trim();
 
     if (!name || !price || !overallRating) {
-        alert('Please fill all required fields');
+        showInfoModal('Please fill all required fields.', 'Validation Error');
         return;
     }
 
@@ -375,7 +375,7 @@ function updateTeam(id) {
     const logo = document.getElementById('teamLogo').value.trim();
 
     if (!name || !owner || !budget) {
-        alert('Please fill all fields');
+        showInfoModal('Please fill all required fields.', 'Validation Error');
         return;
     }
 
@@ -434,7 +434,7 @@ function teamBid(teamId) {
     const nextBid = getNextBidAmount(currentBid);
 
     if (team.spentAmount + nextBid > team.budget) {
-        alert(`${team.name} - Budget exceeded! Cannot bid more.`);
+        showInfoModal(`${team.name} - Budget exceeded! Cannot bid more.`, 'Bid Error');
         return;
     }
 
@@ -490,7 +490,7 @@ function stopAuctionTimer() {
 function undoBid() {
     console.log('undoBid called, bidHistory length:', bidHistory.length);
     if (bidHistory.length === 0) {
-        alert('No bids to undo');
+        showInfoModal('No bids to undo.', 'Undo Bid');
         return;
     }
 
@@ -550,7 +550,7 @@ function sellPlayer() {
         // No bidder - sell at base price to team with most remaining budget that can afford it
         const affordableTeams = teams.filter(t => (t.budget - t.spentAmount) >= currentAuctionPlayer.basePrice);
         if (affordableTeams.length === 0) {
-            alert('No team can afford this player at base price');
+            showInfoModal('No team can afford this player at base price.', 'Auction Notice');
             return;
         }
         // Sort by remaining budget descending
@@ -631,7 +631,7 @@ function releasePlayer(teamId, playerId = null, playerName = '') {
         return p.name === playerName;
     });
     if (playerIndex === -1) {
-        alert('Player not found on this team');
+        showInfoModal('Player not found on this team.', 'Release Error');
         return;
     }
 
@@ -693,7 +693,7 @@ function releasePlayer(teamId, playerId = null, playerName = '') {
     renderTeamList();
     renderSummaryTeams();
     renderAuction();
-    alert(`${restoredPlayer.name} has been released from ${team.name} and is now unsold.`);
+    showInfoModal(`${restoredPlayer.name} has been released from ${team.name} and is now unsold.`, 'Player Released');
 }
 
 function showSaleModal(playerName, teamName, amount) {
@@ -706,6 +706,37 @@ function showSaleModal(playerName, teamName, amount) {
 function closeSaleModal() {
     const modal = document.getElementById('saleModal');
     if (modal) modal.classList.remove('active');
+}
+
+function showInfoModal(message, title = 'Notice') {
+    document.getElementById('infoModalTitle').innerText = title;
+    document.getElementById('infoModalText').innerText = message;
+    document.getElementById('infoModal').classList.add('active');
+}
+
+function closeInfoModal() {
+    document.getElementById('infoModal').classList.remove('active');
+}
+
+let currentConfirmCallback = null;
+
+function showConfirmModal(message, callback, title = 'Confirm') {
+    document.getElementById('confirmModalTitle').innerText = title;
+    document.getElementById('confirmModalText').innerText = message;
+    currentConfirmCallback = callback;
+    const yesButton = document.getElementById('confirmModalYes');
+    yesButton.onclick = () => {
+        if (typeof currentConfirmCallback === 'function') {
+            currentConfirmCallback();
+        }
+        closeConfirmModal();
+    };
+    document.getElementById('confirmModal').classList.add('active');
+}
+
+function closeConfirmModal() {
+    document.getElementById('confirmModal').classList.remove('active');
+    currentConfirmCallback = null;
 }
 
 
@@ -1266,7 +1297,7 @@ function downloadPlayersCSV() {
 
 // Reset Everything
 function resetAuction() {
-    if (confirm('Are you sure? This will clear all data.')) {
+    showConfirmModal('Are you sure? This will clear all data.', () => {
         players = [];
         teams = [];
         soldPlayers = [];
@@ -1277,7 +1308,7 @@ function resetAuction() {
         saveData();
         renderAll();
         switchPage('home');
-    }
+    }, 'Reset Auction');
 }
 
 // Badge Styles
@@ -1342,6 +1373,10 @@ window.sellPlayer = sellPlayer;
 window.releasePlayer = releasePlayer;
 window.showSaleModal = showSaleModal;
 window.closeSaleModal = closeSaleModal;
+window.showInfoModal = showInfoModal;
+window.closeInfoModal = closeInfoModal;
+window.showConfirmModal = showConfirmModal;
+window.closeConfirmModal = closeConfirmModal;
 window.addPlayer = addPlayer;
 window.clearPlayerForm = clearPlayerForm;
 window.addTeam = addTeam;
