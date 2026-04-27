@@ -1067,6 +1067,9 @@ function renderAuction() {
         return;
     }
 
+    const bidderTeam = teams.find(t => t.id === currentBidder?.id);
+    
+
     const auctionStatHtml = `
         <div class="auction-stat-card">
             <div class="stat-label">Current Bid</div>
