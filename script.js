@@ -1010,15 +1010,19 @@ function renderSummaryTeams() {
     teams.forEach(team => {
         const remaining = team.budget - team.spentAmount;
         const playerCount = (team.players || []).length;
-        const playerItems = (team.players || []).map(player => `
-            <div class="team-player-chip">
-                <span>${player.name}</span>
-                <strong>₹${player.price.toLocaleString()}</strong>
+        const playerCards = (team.players || []).map(player => `
+            <div class="team-player-card">
+                <img class="player-thumb" src="${player.imageUrl || 'https://via.placeholder.com/90x90/8b5cf6/ffffff?text=Player'}" alt="${player.name}" onerror="this.src='https://via.placeholder.com/90x90/8b5cf6/ffffff?text=Player'" />
+                <div class="player-card-info">
+                    <div class="player-card-name">${player.name}</div>
+                    <div class="player-card-meta">${player.role} • ₹${player.price.toLocaleString()}</div>
+                </div>
+                <button class="btn-release" onclick="releasePlayer(${team.id}, ${player.playerId || player.id}, '${player.name.replace(/'/g, "\\'")}')">Release</button>
             </div>
         `).join('');
 
         html += `
-            <div class="summary-card">
+            <div class="summary-card summary-team-card">
                 <img class="summary-card-logo" src="${team.logoUrl}" alt="${team.name} logo" onerror="this.src='https://via.placeholder.com/80x80/8b5cf6/ffffff?text=🏏'" />
                 <div class="summary-card-content">
                     <div class="summary-card-title">${team.name} <span class="summary-card-badge">${playerCount} players</span></div>
@@ -1027,8 +1031,8 @@ function renderSummaryTeams() {
                         <span>Spent ₹${team.spentAmount.toLocaleString()}</span>
                         <span>Left ₹${remaining.toLocaleString()}</span>
                     </div>
-                    <div class="summary-card-text">${playerCount > 0 ? `Top picks are ready!` : `No players bought yet—draft quickly.`}</div>
-                    ${playerCount > 0 ? `<div class="team-player-list">${playerItems}</div>` : ''}
+                    <div class="summary-card-text">${playerCount > 0 ? `Players on roster:` : `No players bought yet — add stars now.`}</div>
+                    ${playerCount > 0 ? `<div class="team-player-grid">${playerCards}</div>` : ''}
                 </div>
             </div>
         `;
@@ -1202,7 +1206,7 @@ function renderAuction() {
                     <div class="auction-button-row">
                         <button class="btn-undo" onclick="undoBid()" ${bidHistory.length === 0 ? 'disabled' : ''}>↶ Undo</button>
                         <button class="btn-secondary" onclick="passPlayer()">PASS</button>
-                        <button class="btn-primary" onclick="sellPlayer()">BID +20L</button>
+                        <button class="btn-primary" onclick="sellPlayer()">Sold!</button>
                     </div>
                 </div>
 
