@@ -11,7 +11,7 @@
         <!-- Navigation -->
         <nav class="navbar">
             <div class="nav-container">
-                <h1 class="nav-title">🏏 SB Premier League</h1>
+                <h1 class="nav-title">🏏 SB Premier League Auction Arena</h1>
                 <div class="nav-links">
                     <button class="nav-btn active" onclick="switchPage('home')">Home</button>
                     <button class="nav-btn" onclick="switchPage('players')">Players</button>
@@ -47,28 +47,28 @@
         <!-- HOME PAGE -->
         <div id="home" class="page active">
             <div class="card hero-card">
-                <h2>Welcome to Cricket Auction Platform</h2>
-                <p>Manage your cricket auction seamlessly</p>
+                <h2>Welcome to the Cricket Auction Arena</h2>
+                <p>Draft your dream squad, bid with heart, and build a champion team. 💜</p>
                 <div class="hero-grid">
                     <div class="hero-item" onclick="switchPage('players')">
-                        <div class="hero-icon">👥</div>
+                        <div class="hero-icon">🧑‍🤝‍🧑</div>
                         <div class="hero-text">Add Players</div>
-                        <div class="hero-desc">Build your player pool</div>
+                        <div class="hero-desc">Draft batting stars, fast bowlers & special all-rounders</div>
                     </div>
                     <div class="hero-item" onclick="switchPage('teams')">
-                        <div class="hero-icon">🎯</div>
-                        <div class="hero-text">Add Teams</div>
-                        <div class="hero-desc">Create teams with budgets</div>
+                        <div class="hero-icon">🏟️</div>
+                        <div class="hero-text">Create Teams</div>
+                        <div class="hero-desc">Build squads with budgets, logos, and captain power</div>
                     </div>
                     <div class="hero-item" onclick="switchPage('auction')">
-                        <div class="hero-icon">🔨</div>
+                        <div class="hero-icon">🔥</div>
                         <div class="hero-text">Live Auction</div>
-                        <div class="hero-desc">Start the auction</div>
+                        <div class="hero-desc">Bid now, pass to keep players in the pool, or sell winners</div>
                     </div>
                     <div class="hero-item" onclick="switchPage('summary')">
-                        <div class="hero-icon">📊</div>
-                        <div class="hero-text">Summary</div>
-                        <div class="hero-desc">View auction results</div>
+                        <div class="hero-icon">📈</div>
+                        <div class="hero-text">Summary Board</div>
+                        <div class="hero-desc">See team stats, sold stars, and auction champions</div>
                     </div>
                 </div>
             </div>
@@ -80,7 +80,7 @@
                 <div class="page-header">
                     <div>
                         <h2>Player Management</h2>
-                        <p class="page-subtitle">Open the player form in a beautiful sky-blue modal.</p>
+                        <p class="page-subtitle">Add top batters, seamers, and superstars for the live auction. 🏏</p>
                     </div>
                     <button class="btn-primary" onclick="openAddPlayerModal()">+ Add Player</button>
                 </div>
@@ -99,7 +99,7 @@
                 <div class="page-header">
                     <div>
                         <h2>Team Management</h2>
-                        <p class="page-subtitle">Add or edit teams with a clean modal entry experience.</p>
+                        <p class="page-subtitle">Create your squad, add owners, and set budgets for auction glory. 🌟</p>
                     </div>
                     <button class="btn-primary" onclick="openAddTeamModal()">+ Add Team</button>
                 </div>
@@ -115,7 +115,8 @@
         <!-- AUCTION PAGE -->
         <div id="auction" class="page">
             <div class="auction-section">
-                <h2 style="color: #333; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #667eea;">Live Auction</h2>
+                <h2 style="color: #fff; margin-bottom: 12px;">🔥 Live Auction Arena</h2>
+                <p class="page-subtitle">Tap a team to bid, use pass to keep the player in the pool, and sell when the winning price is ready.</p>
 
                 <div id="auctionContainer" class="empty-state" style="padding: 40px 20px;">
                     <p>Add players and teams to start the auction</p>
@@ -126,7 +127,8 @@
         <!-- SUMMARY PAGE -->
         <div id="summary" class="page">
             <div class="card">
-                <h2>Auction Summary</h2>
+                <h2>🏆 Auction Summary Board</h2>
+                <p class="page-subtitle">Review winning teams, top players, and final budget standings in the pink-purple leaderboard.</p>
                 <div class="summary-actions">
                     <button class="btn-primary" onclick="printSummary()">Print Summary</button>
                     <button class="btn-success" onclick="downloadPlayersCSV()">Download Player List</button>
