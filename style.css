@@ -786,71 +786,281 @@ button:active {
   color: #ffffff;
 }
 
-.current-auction {
-  background: rgba(22, 7, 55, 0.96);
+.auction-grid {
+  display: grid;
+  grid-template-columns: 2.2fr 1fr;
+  gap: 22px;
+}
+
+.auction-main-panel,
+.auction-side-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.auction-panel {
+  background: rgba(18, 9, 45, 0.95);
   border: 1px solid rgba(236,72,153,0.18);
-  border-radius: 32px;
+  border-radius: 30px;
+  padding: 24px;
+  box-shadow: 0 20px 50px rgba(15, 8, 42, 0.24);
+}
+
+.auction-card-top {
   padding: 28px;
-  box-shadow: 0 24px 80px rgba(99, 12, 67, 0.28);
-  position: relative;
-  overflow: hidden;
 }
 
-.current-auction::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at top right, rgba(236,72,153,0.18), transparent 22%),
-              radial-gradient(circle at bottom left, rgba(168,85,247,0.18), transparent 18%);
-  pointer-events: none;
+.auction-section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 18px;
+  margin-bottom: 22px;
 }
 
-.current-auction .player-image-large {
-  width: 100%;
-  max-width: 260px;
+.auction-heading {
+  font-size: 18px;
+  color: #f8fafc;
+  font-weight: 800;
+}
+
+.auction-subtitle {
+  color: #cbd5e1;
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+.auction-badge {
+  background: rgba(236,72,153,0.18);
+  color: #f9a8d4;
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.auction-player-row {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: 24px;
+  align-items: center;
+}
+
+.auction-player-image {
   border-radius: 28px;
   overflow: hidden;
-  box-shadow: 0 22px 45px rgba(15, 23, 42, 0.35);
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
 }
 
-.current-auction img {
+.auction-player-image img {
   display: block;
   width: 100%;
   height: auto;
 }
 
-.player-info-large {
+.auction-player-details {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.auction-detail-block {
+  display: flex;
+  justify-content: space-between;
   gap: 16px;
-  align-items: center;
-  margin-bottom: 18px;
+  padding: 16px 18px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
 }
 
-.auction-player-name {
-  font-size: clamp(28px, 3vw, 38px);
-  color: #ffffff;
-  font-weight: 800;
+.auction-detail-block .detail-label {
+  color: #94a3b8;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
-.player-rating {
-  color: #facc15;
-  font-size: 16px;
+.auction-detail-block .detail-value {
+  color: #f8fafc;
   font-weight: 700;
 }
 
-.auction-details {
+.auction-detail-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-  gap: 16px;
-  margin-top: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
 }
 
-.auction-details .detail-box {
+.auction-detail-box {
   background: rgba(255,255,255,0.06);
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: 20px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.auction-detail-box strong {
+  color: #f8fafc;
+  font-size: 13px;
+}
+
+.auction-detail-box span {
+  color: #cbd5e1;
+  font-size: 13px;
+}
+
+.auction-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.auction-stat-card {
   padding: 18px;
+  border-radius: 24px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+.auction-stat-card .stat-label {
+  color: #94a3b8;
+  font-size: 12px;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.auction-stat-card .stat-value {
+  color: #f8fafc;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.team-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 14px;
+}
+
+.team-overview-card {
+  padding: 16px;
+  border-radius: 22px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.10);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.team-logo-small {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  object-fit: cover;
+  border: 1px solid rgba(255,255,255,0.16);
+}
+
+.team-overview-title {
+  color: #f8fafc;
+  font-weight: 800;
+  font-size: 14px;
+}
+
+.team-overview-sub {
+  color: #cbd5e1;
+  font-size: 12px;
+}
+
+.team-overview-value {
+  color: #f9a8d4;
+  font-weight: 800;
+  font-size: 18px;
+}
+
+.team-overview-meta {
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+.auction-actions-list {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.team-bid-preview {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 18px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.06);
+  color: #f8fafc;
+  border: 1px solid rgba(255,255,255,0.12);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.team-bid-preview:hover,
+.team-bid-preview.active {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 36px rgba(236,72,153,0.18);
+  border-color: rgba(236,72,153,0.30);
+}
+
+.auction-button-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.auction-activity-panel {
+  padding-top: 20px;
+}
+
+.activity-list {
+  display: grid;
+  gap: 12px;
+}
+
+.activity-row,
+.activity-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: #f8fafc;
+}
+
+.activity-title {
+  color: #94a3b8;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.activity-value {
+  color: #f8fafc;
+  font-weight: 700;
+}
+
+.activity-value.muted {
+  color: #a1a1aa;
+}
+
+@media (max-width: 1020px) {
+  .auction-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .detail-label {
