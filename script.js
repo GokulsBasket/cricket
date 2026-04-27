@@ -361,21 +361,19 @@ function getRandomPlayer() {
     return players[randomIndex];
 }
 
-// Get Next Player
+// Get Next Player in sequence
 function getNextPlayer() {
     if (players.length === 0) {
         showAuctionComplete();
         return;
     }
 
-    currentAuctionPlayer = getRandomPlayer();
+    currentAuctionPlayer = players[0];
     if (!currentAuctionPlayer) return;
 
     currentBid = currentAuctionPlayer.basePrice;
     currentBidder = null;
     bidHistory = [];
-
-
 
     renderAuction();
 }
@@ -458,6 +456,40 @@ function undoBid() {
 
     renderAuction();
 }
+
+function passPlayer() {
+    if (!currentAuctionPlayer) return;
+
+    const player = currentAuctionPlayer;
+
+    unsoldPlayers.push({
+        playerName: player.name,
+        role: player.role,
+        category: player.category,
+        basePrice: player.basePrice,
+        imageUrl: player.imageUrl
+    });
+
+    // Remove the current player from auction and move to next sequential player
+    players = players.filter(p => p.id !== player.id);
+
+    currentAuctionPlayer = null;
+    currentBid = 0;
+    currentBidder = null;
+    bidHistory = [];
+
+    saveData();
+    updateStats();
+
+    setTimeout(() => {
+        if (players.length === 0) {
+            showAuctionComplete();
+        } else {
+            getNextPlayer();
+        }
+    }, 250);
+}
+
 function sellPlayer() {
     console.log('sellPlayer called, currentBidder:', currentBidder, 'currentAuctionPlayer:', currentAuctionPlayer);
     
@@ -489,6 +521,7 @@ function sellPlayer() {
     // Update team
     team.spentAmount += soldPrice;
     team.players.push({
+        playerId: player.id,
         name: player.name,
         role: player.role,
         price: soldPrice,
@@ -497,10 +530,16 @@ function sellPlayer() {
 
     // Record sold player
     soldPlayers.push({
+        playerId: player.id,
+        teamId: team.id,
         playerName: player.name,
         role: player.role,
         category: player.category,
         basePrice: player.basePrice,
+        battingStyle: player.battingStyle,
+        battingOrder: player.battingOrder,
+        bowlingStyle: player.bowlingStyle,
+        overallRating: player.overallRating,
         imageUrl: player.imageUrl,
         soldPrice: soldPrice,
         soldTo: team.name,
@@ -535,6 +574,80 @@ function sellPlayer() {
     }, 1000);
 }
 
+function releasePlayer(teamId, playerId = null, playerName = '') {
+    const team = teams.find(t => t.id === teamId);
+    if (!team) return;
+
+    const playerIndex = team.players.findIndex(p => {
+        if (playerId !== null) return p.playerId === playerId;
+        return p.name === playerName;
+    });
+    if (playerIndex === -1) {
+        alert('Player not found on this team');
+        return;
+    }
+
+    const released = team.players[playerIndex];
+    team.players.splice(playerIndex, 1);
+    team.spentAmount = Math.max(0, team.spentAmount - released.price);
+
+    let soldIndex = -1;
+    let soldRecord = null;
+    if (playerId !== null) {
+        soldIndex = soldPlayers.findIndex(s => s.playerId === playerId && s.teamId === teamId);
+    }
+    if (soldIndex === -1) {
+        soldIndex = soldPlayers.findIndex(s => s.playerName === playerName && s.soldTo === team.name && s.soldPrice === released.price);
+    }
+    if (soldIndex !== -1) {
+        soldRecord = soldPlayers[soldIndex];
+        soldPlayers.splice(soldIndex, 1);
+    }
+
+    const restoredPlayer = soldRecord ? {
+        id: soldRecord.playerId || Date.now(),
+        name: soldRecord.playerName,
+        role: soldRecord.role,
+        category: soldRecord.category,
+        basePrice: soldRecord.basePrice,
+        battingStyle: soldRecord.battingStyle || 'N/A',
+        battingOrder: soldRecord.battingOrder || 'N/A',
+        bowlingStyle: soldRecord.bowlingStyle || 'N/A',
+        overallRating: soldRecord.overallRating || 5,
+        imageUrl: soldRecord.imageUrl || released.imageUrl,
+        status: 'available'
+    } : {
+        id: playerId || Date.now(),
+        name: released.name,
+        role: released.role,
+        category: 'A',
+        basePrice: released.price,
+        battingStyle: 'N/A',
+        battingOrder: 'N/A',
+        bowlingStyle: 'N/A',
+        overallRating: 5,
+        imageUrl: released.imageUrl,
+        status: 'available'
+    };
+
+    unsoldPlayers.push({
+        playerName: restoredPlayer.name,
+        role: restoredPlayer.role,
+        category: restoredPlayer.category,
+        basePrice: restoredPlayer.basePrice,
+        imageUrl: restoredPlayer.imageUrl
+    });
+
+    players.push(restoredPlayer);
+
+    saveData();
+    updateStats();
+    renderTeamList();
+    renderSummaryTeams();
+    renderAuction();
+    alert(`${restoredPlayer.name} has been released from ${team.name} and is now unsold.`);
+}
+
 function showSaleModal(playerName, teamName, amount) {
     const modal = document.getElementById('saleModal');
     const text = document.getElementById('saleModalText');
@@ -552,13 +665,16 @@ function closeSaleModal() {
 // Show Auction Complete
 function showAuctionComplete() {
     // Move any remaining players to unsold
-    unsoldPlayers = players.map(p => ({
-        playerName: p.name,
-        role: p.role,
-        category: p.category,
-        basePrice: p.basePrice,
-        imageUrl: p.imageUrl
-    }));
+    unsoldPlayers = [
+        ...unsoldPlayers,
+        ...players.map(p => ({
+            playerName: p.name,
+            role: p.role,
+            category: p.category,
+            basePrice: p.basePrice,
+            imageUrl: p.imageUrl
+        }))
+    ];
     players = [];
     saveData();
     
@@ -641,37 +757,122 @@ function renderAll() {
 // Render Player List
 function renderPlayerList() {
     const container = document.getElementById('playerList');
-    const availablePlayers = players.filter(p => p.status === 'available');
 
-    if (availablePlayers.length === 0) {
+    const allPlayers = [
+        ...players.map(player => ({
+            id: player.id,
+            name: player.name,
+            role: player.role,
+            category: player.category,
+            basePrice: player.basePrice,
+            battingStyle: player.battingStyle,
+            battingOrder: player.battingOrder,
+            bowlingStyle: player.bowlingStyle,
+            overallRating: player.overallRating,
+            imageUrl: player.imageUrl,
+            status: 'Available'
+        })),
+        ...unsoldPlayers.map(player => ({
+            id: player.playerId || null,
+            name: player.playerName,
+            role: player.role,
+            category: player.category,
+            basePrice: player.basePrice,
+            battingStyle: player.battingStyle || 'N/A',
+            battingOrder: player.battingOrder || 'N/A',
+            bowlingStyle: player.bowlingStyle || 'N/A',
+            overallRating: player.overallRating || 0,
+            imageUrl: player.imageUrl,
+            status: 'Unsold'
+        })),
+        ...soldPlayers.map(player => ({
+            id: player.playerId || null,
+            name: player.playerName,
+            role: player.role,
+            category: player.category,
+            basePrice: player.basePrice,
+            battingStyle: player.battingStyle || 'N/A',
+            battingOrder: player.battingOrder || 'N/A',
+            bowlingStyle: player.bowlingStyle || 'N/A',
+            overallRating: player.overallRating || 0,
+            imageUrl: player.imageUrl,
+            status: 'Sold'
+        }))
+    ];
+
+    if (allPlayers.length === 0) {
         container.innerHTML = '<div class="empty-state"><p>No players added yet</p></div>';
         return;
     }
 
-    container.innerHTML = availablePlayers.map(player => `
-        <div class="player-card">
-            <div class="player-image">
-                <img src="${player.imageUrl}" alt="${player.name}" onerror="this.src='https://via.placeholder.com/150x200/667eea/white?text=No+Image'">
-            </div>
-            <div class="player-info">
-                <div class="player-name">${player.name}</div>
-                <div class="player-details">
-                    <span class="badge badge-role">${player.role}</span>
-                    <span class="badge badge-category">Category ${player.category}</span>
-                    <span class="rating-badge">⭐ ${player.overallRating}/10</span>
+    const categoryOrder = { A: 1, B: 2, C: 3 };
+    allPlayers.sort((a, b) => {
+        if (categoryOrder[a.category] !== categoryOrder[b.category]) {
+            return categoryOrder[a.category] - categoryOrder[b.category];
+        }
+        if (a.role !== b.role) {
+            return a.role.localeCompare(b.role);
+        }
+        return a.name.localeCompare(b.name);
+    });
+
+    const grouped = allPlayers.reduce((acc, player) => {
+        acc[player.category] = acc[player.category] || [];
+        acc[player.category].push(player);
+        return acc;
+    }, {});
+
+    const categoryLabels = {
+        A: 'Category A (Premium)',
+        B: 'Category B (Mid)',
+        C: 'Category C (Budget)'
+    };
+
+    let html = '';
+
+    Object.keys(categoryLabels).forEach(category => {
+        const playersInCategory = grouped[category] || [];
+        if (playersInCategory.length === 0) return;
+
+        html += `
+            <div class="player-category-section">
+                <div class="category-header">
+                    <h3>${categoryLabels[category]}</h3>
+                    <span>${playersInCategory.length} players</span>
                 </div>
-                <div class="player-stats">
-                    <div class="stat-item"><strong>Batting:</strong> ${player.battingStyle} (${player.battingOrder})</div>
-                    <div class="stat-item"><strong>Bowling:</strong> ${player.bowlingStyle}</div>
-                    <div class="stat-item"><strong>Base Price:</strong> ₹${player.basePrice}</div>
+                <div class="player-category-grid">
+                    ${playersInCategory.map(player => `
+                        <div class="player-card">
+                            <div class="player-image">
+                                <img src="${player.imageUrl}" alt="${player.name}" onerror="this.src='https://via.placeholder.com/150x200/667eea/white?text=No+Image'">
+                            </div>
+                            <div class="player-info">
+                                <div class="player-name">${player.name}</div>
+                                <div class="player-details">
+                                    <span class="badge badge-role">${player.role}</span>
+                                    <span class="badge badge-category">Category ${player.category}</span>
+                                    <span class="badge badge-status ${player.status.toLowerCase()}">${player.status}</span>
+                                </div>
+                                <div class="player-stats">
+                                    <div class="stat-item"><strong>Batting:</strong> ${player.battingStyle} (${player.battingOrder})</div>
+                                    <div class="stat-item"><strong>Bowling:</strong> ${player.bowlingStyle}</div>
+                                    <div class="stat-item"><strong>Base Price:</strong> ₹${player.basePrice}</div>
+                                </div>
+                            </div>
+                            ${player.status === 'Available' ? `
+                                <div class="player-actions">
+                                    <button class="btn-edit" onclick="editPlayer(${player.id})">Edit</button>
+                                    <button class="btn-danger" onclick="removePlayer(${player.id})">Remove</button>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `).join('')}
                 </div>
             </div>
-            <div class="player-actions">
-                <button class="btn-edit" onclick="editPlayer(${player.id})">Edit</button>
-                <button class="btn-danger" onclick="removePlayer(${player.id})">Remove</button>
-            </div>
-        </div>
-    `).join('');
+        `;
+    });
+
+    container.innerHTML = html;
 }
 
 // Render Team List
@@ -764,12 +965,15 @@ function renderSummaryTeams() {
                     <div style="margin-top: 15px; font-size: 12px; border-top: 1px solid #ddd; padding-top: 10px; position: relative; z-index: 2;">
                         <div style="font-weight: 600; margin-bottom: 8px; color: #667eea;">Players:</div>
                         ${team.players.map(p => `
-                            <div style="display:flex; align-items:center; gap:8px; margin-bottom: 6px; padding: 6px; background: rgba(255,255,255,0.9); border-radius: 4px;">
-                                <img src="${p.imageUrl || 'https://via.placeholder.com/60x80/667eea/ffffff?text=No+Img'}" alt="${p.name}" style="width:40px; height:50px; object-fit:cover; border-radius:4px; border:2px solid #667eea;" />
-                                <div style="flex:1;">
-                                    <strong>${p.name}</strong> (${p.role}) <br />
-                                    <span style="font-size:12px;">₹${p.price.toLocaleString()}</span>
+                            <div style="display:flex; align-items:center; gap:8px; margin-bottom: 6px; padding: 10px 8px; background: rgba(255,255,255,0.92); border-radius: 8px; justify-content: space-between;">
+                                <div style="display:flex; align-items:center; gap:8px; flex:1;">
+                                    <img src="${p.imageUrl || 'https://via.placeholder.com/60x80/667eea/ffffff?text=No+Img'}" alt="${p.name}" style="width:40px; height:50px; object-fit:cover; border-radius:4px; border:2px solid #667eea;" />
+                                    <div>
+                                        <strong>${p.name}</strong> (${p.role}) <br />
+                                        <span style="font-size:12px;">₹${p.price.toLocaleString()}</span>
+                                    </div>
                                 </div>
+                                <button class="btn-secondary" onclick="releasePlayer(${team.id}, ${p.playerId ?? 'null'}, '${(p.name || '').replace(/'/g, "\\'")}')">Release</button>
                             </div>
                         `).join('')}
                     </div>
@@ -830,10 +1034,11 @@ function renderAuction() {
         `;
     }
 
+    const playersLeft = players.length;
     container.innerHTML = `
         <div class="current-auction">
             <button class="btn-secondary" style="margin-bottom:15px;" onclick="switchPage('home')">🏠 Back to Home</button>
-            
+            <div style="margin-bottom: 15px; color: #444; font-size: 16px; font-weight: 600;">Players Left in Auction: ${playersLeft}</div>
             <div style="display: flex; gap: 20px; margin-bottom: 25px;">
                 <!-- Left Side: Player Image (30%) -->
                 <div style="flex: 0 0 30%; display: flex; align-items: flex-start;">
@@ -906,6 +1111,7 @@ function renderAuction() {
 
                 <div class="auction-actions">
                     <button class="btn-undo" onclick="undoBid()" ${bidHistory.length === 0 ? 'disabled' : ''}>↶ Undo</button>
+                    <button class="btn-secondary" onclick="passPlayer()">⏭ Pass</button>
                     <button class="btn-primary" onclick="sellPlayer()">✓ Sold!</button>
                 </div>
             </div>
