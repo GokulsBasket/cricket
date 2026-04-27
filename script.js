@@ -1071,7 +1071,9 @@ function renderAuction() {
     const bidderInfo = currentBidder ? `
         <div class="activity-item">
             <div class="activity-title">Highest Bidder</div>
-            <div class="activity-value">${currentBidder.name}</div>
+            <div class="activity-value bidder-logo-wrap">
+                <img class="bidder-logo-small" src="${bidderTeam?.logoUrl || 'https://via.placeholder.com/50x50/000000/ffffff?text=🏏'}" alt="${currentBidder.name} logo" onerror="this.src='https://via.placeholder.com/50x50/000000/ffffff?text=🏏'" />
+            </div>
         </div>
     ` : `
         <div class="activity-item">
@@ -1086,28 +1088,10 @@ function renderAuction() {
             <div class="stat-value">₹${currentBid.toLocaleString()}</div>
         </div>
         <div class="auction-stat-card">
-            <div class="stat-label">Team in Lead</div>
-            <div class="stat-value">${currentBidder ? currentBidder.name : 'No leader'}</div>
-        </div>
-        <div class="auction-stat-card">
             <div class="stat-label">Player Category</div>
             <div class="stat-value">Cat ${currentAuctionPlayer.category}</div>
         </div>
     `;
-
-    const teamOverviewHtml = teams.map(team => {
-        const remaining = team.budget - team.spentAmount;
-        const teamPlayers = team.players?.length || 0;
-        return `
-            <div class="team-overview-card">
-                <img class="team-logo-small" src="${team.logoUrl}" alt="${team.name} logo" onerror="this.src='https://via.placeholder.com/60x60/8b5cf6/ffffff?text=🏏'" />
-                <div class="team-overview-title">${team.name}</div>
-                <div class="team-overview-sub">Funds left</div>
-                <div class="team-overview-value">₹${remaining.toLocaleString()}</div>
-                <div class="team-overview-meta">${teamPlayers}/25 players</div>
-            </div>
-        `;
-    }).join('');
 
     const activityItems = [];
     if (currentBidder) {
@@ -1170,19 +1154,6 @@ function renderAuction() {
                 <div class="auction-panel auction-stats-panel">
                     <div class="auction-stats-grid">
                         ${auctionStatHtml}
-                    </div>
-                </div>
-
-                <div class="auction-panel team-overview-panel">
-                    <div class="auction-section-head">
-                        <div>
-                            <div class="auction-heading">Teams Overview</div>
-                            <div class="auction-subtitle">Funds remaining & total players bought</div>
-                        </div>
-                        <button class="btn-secondary" onclick="switchPage('teams')">View All Teams</button>
-                    </div>
-                    <div class="team-overview-grid">
-                        ${teamOverviewHtml}
                     </div>
                 </div>
             </div>
