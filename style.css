@@ -696,16 +696,63 @@ button:active {
   margin-top: 14px;
 }
 
-.team-player-chip {
-  display: flex;
-  justify-content: space-between;
+.team-player-grid {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.team-player-card {
+  display: grid;
+  grid-template-columns: 90px minmax(0, 1fr) auto;
+  gap: 12px;
   align-items: center;
-  padding: 10px 14px;
-  border-radius: 16px;
+  padding: 12px 14px;
+  border-radius: 18px;
   background: rgba(255,255,255,0.08);
   border: 1px solid rgba(236,72,153,0.16);
-  color: #f8f8ff;
+}
+
+.player-thumb {
+  width: 90px;
+  height: 90px;
+  border-radius: 18px;
+  object-fit: cover;
+  border: 1px solid rgba(255,255,255,0.18);
+}
+
+.player-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.player-card-name {
+  color: #f8fafc;
+  font-weight: 800;
+  font-size: 15px;
+}
+
+.player-card-meta {
+  color: #cbd5e1;
   font-size: 13px;
+}
+
+.btn-release {
+  padding: 10px 14px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #f472b6, #a855f7);
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-release:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 22px rgba(168,85,247,0.25);
 }
 
 .team-player-chip strong {
