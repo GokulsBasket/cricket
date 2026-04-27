@@ -49,7 +49,7 @@ function initializeData() {
                 ...team,
                 players: Array.isArray(team.players) ? team.players : [],
                 spentAmount: Number(team.spentAmount) || 0,
-                logoUrl: team.logoUrl || 'https://via.placeholder.com/80x80/667eea/ffffff?text=Logo'
+                logoUrl: team.logoUrl || 'https://placeholder.com/80x80/667eea/ffffff?text=Logo'
             })) : [];
         } else {
             players = [];
@@ -198,7 +198,7 @@ function addPlayer() {
         battingOrder,
         bowlingStyle,
         overallRating,
-        imageUrl: imageUrl || 'https://via.placeholder.com/150x200/667eea/white?text=No+Image',
+        imageUrl: imageUrl || 'https://placeholder.com/150x200/667eea/white?text=No+Image',
         status: 'available'
     };
 
@@ -227,7 +227,7 @@ function addTeam() {
         owner,
         budget,
         spentAmount: 0,
-        logoUrl: logo || 'https://via.placeholder.com/80x80/667eea/ffffff?text=Logo',
+        logoUrl: logo || 'https://placeholder.com/80x80/667eea/ffffff?text=Logo',
         players: []
     };
 
@@ -337,7 +337,7 @@ function updatePlayer(id) {
         battingOrder,
         bowlingStyle,
         overallRating,
-        imageUrl: imageUrl || 'https://via.placeholder.com/150x200/667eea/white?text=No+Image'
+        imageUrl: imageUrl || 'https://placeholder.com/150x200/667eea/white?text=No+Image'
     };
 
     saveData();
@@ -389,7 +389,7 @@ function updateTeam(id) {
         name,
         owner,
         budget,
-        logoUrl: logo || 'https://via.placeholder.com/80x80/667eea/ffffff?text=Logo'
+        logoUrl: logo || 'https://placeholder.com/80x80/667eea/ffffff?text=Logo'
     };
 
     saveData();
@@ -918,7 +918,7 @@ function renderPlayerList() {
                     ${playersInCategory.map(player => `
                         <div class="player-card">
                             <div class="player-image">
-                                <img src="${player.imageUrl}" alt="${player.name}" onerror="this.src='https://via.placeholder.com/150x200/667eea/white?text=No+Image'">
+                                <img src="${player.imageUrl}" alt="${player.name}" onerror="this.src='https://placeholder.com/150x200/667eea/white?text=No+Image'">
                             </div>
                             <div class="player-info">
                                 <div class="player-name">${player.name}</div>
@@ -967,7 +967,7 @@ function renderTeamList() {
             <div class="team-card ${categoryColor}">
                 <div class="team-header" style="display: flex; justify-content: space-between; align-items: center;">
                     <div style="display: flex; align-items: center; gap: 12px;">
-                        <img class="team-logo" src="${team.logoUrl}" alt="${team.name} logo" onerror="this.src='https://via.placeholder.com/80x80/667eea/ffffff?text=Logo'" />
+                        <img class="team-logo" src="${team.logoUrl}" alt="${team.name} logo" onerror="this.src='https://placeholder.com/80x80/667eea/ffffff?text=Logo'" />
                         <div>
                             <div class="team-name">${team.name}</div>
                             <div style="font-size: 13px; color: #555;">Owner: ${team.owner}</div>
@@ -1012,7 +1012,7 @@ function renderSummaryTeams() {
         const playerCount = (team.players || []).length;
         const playerCards = (team.players || []).map(player => `
             <div class="team-player-card">
-                <img class="player-thumb" src="${player.imageUrl || 'https://via.placeholder.com/90x90/8b5cf6/ffffff?text=Player'}" alt="${player.name}" onerror="this.src='https://via.placeholder.com/90x90/8b5cf6/ffffff?text=Player'" />
+                <img class="player-thumb" src="${player.imageUrl || 'https://placeholder.com/90x90/8b5cf6/ffffff?text=Player'}" alt="${player.name}" onerror="this.src='https://placeholder.com/90x90/8b5cf6/ffffff?text=Player'" />
                 <div class="player-card-info">
                     <div class="player-card-name">${player.name}</div>
                     <div class="player-card-meta">${player.role} • ₹${player.price.toLocaleString()}</div>
@@ -1023,7 +1023,7 @@ function renderSummaryTeams() {
 
         html += `
             <div class="summary-card summary-team-card">
-                <img class="summary-card-logo" src="${team.logoUrl}" alt="${team.name} logo" onerror="this.src='https://via.placeholder.com/80x80/8b5cf6/ffffff?text=🏏'" />
+                <img class="summary-card-logo" src="${team.logoUrl}" alt="${team.name} logo" onerror="this.src='https://placeholder.com/80x80/8b5cf6/ffffff?text=Logo'" />
                 <div class="summary-card-content">
                     <div class="summary-card-title">${team.name} <span class="summary-card-badge">${playerCount} players</span></div>
                     <div class="summary-card-text">Owner: ${team.owner} • Budget: ₹${team.budget.toLocaleString()}</div>
@@ -1092,7 +1092,7 @@ function renderAuction() {
          <div class="auction-stat-card">
             <div class="stat-label">Highest Bidder</div>
             <div class="stat-value">
-                <img class="bidder-logo-small" src="${bidderTeam?.logoUrl || 'https://via.placeholder.com/50x50/000000/ffffff?text=Logo'}" alt="${currentBidder?.name || 'No bidder'} logo" onerror="this.src='https://via.placeholder.com/50x50/000000/ffffff?text=Logo'" />
+                <img class="bidder-logo-small" src="${bidderTeam?.logoUrl || 'https://placeholder.com/50x50/000000/ffffff?text=Logo'}" alt="${currentBidder?.name || 'No bidder'} logo" onerror="this.src='https://placeholder.com/50x50/000000/ffffff?text=Logo'" />
             </div>
         </div>
 
@@ -1135,7 +1135,7 @@ function renderAuction() {
 
                     <div class="auction-player-row">
                         <div class="auction-player-image">
-                            <img src="${currentAuctionPlayer.imageUrl}" alt="${currentAuctionPlayer.name}" onerror="this.src='https://via.placeholder.com/260x320/8b5cf6/ffffff?text=Player'" />
+                            <img src="${currentAuctionPlayer.imageUrl}" alt="${currentAuctionPlayer.name}" onerror="this.src='https://placeholder.com/260x320/8b5cf6/ffffff?text=Player'" />
                         </div>
                         <div class="auction-player-details">
                             <div class="auction-detail-block">
@@ -1220,7 +1220,7 @@ function renderSoldPlayers() {
 
     container.innerHTML = soldPlayers.map((sold, index) => `
         <div class="sold-player" style="display:flex;align-items:center; gap:12px;">
-            <img src="${sold.imageUrl || 'https://via.placeholder.com/70x90/667eea/ffffff?text=No+Img'}" alt="${sold.playerName}" style="width:70px;height:90px;object-fit:cover;border-radius:8px;border:2px solid #667eea;" onerror="console.log('Image failed to load for:', sold.playerName, sold.imageUrl)" />
+            <img src="${sold.imageUrl || 'https://placeholder.com/70x90/667eea/ffffff?text=No+Img'}" alt="${sold.playerName}" style="width:70px;height:90px;object-fit:cover;border-radius:8px;border:2px solid #667eea;" onerror="console.log('Image failed to load for:', sold.playerName, sold.imageUrl)" />
             <div style="flex:1;">
                 <div style="margin-bottom: 8px; color: #999; font-size: 12px;">#${index + 1}</div>
                 <div class="sold-info" style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
@@ -1246,7 +1246,7 @@ function renderUnsoldPlayers() {
 
     container.innerHTML = unsoldPlayers.map(unsold => `
         <div class="list-item" style="align-items:flex-start; gap:12px;">
-            <img src="${unsold.imageUrl || 'https://via.placeholder.com/70x90/667eea/ffffff?text=No+Img'}" alt="${unsold.playerName}" style="width:70px; height:90px; object-fit:cover; border-radius:8px; border:2px solid #667eea;" />
+            <img src="${unsold.imageUrl || 'https://placeholder.com/70x90/667eea/ffffff?text=No+Img'}" alt="${unsold.playerName}" style="width:70px; height:90px; object-fit:cover; border-radius:8px; border:2px solid #667eea;" />
             <div class="item-info">
                 <div class="item-name">${unsold.playerName}</div>
                 <div class="item-details">
