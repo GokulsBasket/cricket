@@ -1092,7 +1092,7 @@ function renderAuction() {
          <div class="auction-stat-card">
             <div class="stat-label">Highest Bidder</div>
             <div class="stat-value">
-                <img class="bidder-logo-small" src="${bidderTeam?.logoUrl || 'https://via.placeholder.com/50x50/000000/ffffff?text=🏏'}" alt="${currentBidder.name} logo" onerror="this.src='https://via.placeholder.com/50x50/000000/ffffff?text=🏏'" />
+                <img class="bidder-logo-small" src="${bidderTeam?.logoUrl || 'https://via.placeholder.com/50x50/000000/ffffff?text=🏏'}" alt="${currentBidder?.name || 'No bidder'} logo" onerror="this.src='https://via.placeholder.com/50x50/000000/ffffff?text=🏏'" />
             </div>
         </div>
 
