@@ -1203,37 +1203,123 @@ function renderAuction() {
 function renderSoldPlayers() {
     const container = document.getElementById('soldList');
 
-    console.log('Rendering sold players:', soldPlayers);
-
     if (soldPlayers.length === 0) {
         container.innerHTML = '<div class="empty-state"><p>No players sold yet</p></div>';
         return;
     }
 
     container.innerHTML = `
-        <div class="summary-player-grid">
-            ${soldPlayers.map((sold, index) => `
-                <div class="summary-player-card sold-card">
-                    <div class="summary-player-image">
-                        <img src="${sold.imageUrl || 'https://placeholder.com/150x200/28a745/ffffff?text=SOLD'}" alt="${sold.playerName}" onerror="this.src='https://placeholder.com/150x200/28a745/ffffff?text=SOLD'">
-                        <div class="card-status sold-status">SOLD</div>
-                    </div>
-                    <div class="summary-player-info">
-                        <div class="summary-player-name">${sold.playerName}</div>
-                        <div class="summary-player-price">₹${sold.soldPrice.toLocaleString()}</div>
-                        <div class="summary-player-details">
-                            <span class="badge badge-role">${sold.role}</span>
-                            <span class="badge badge-category">Cat ${sold.category}</span>
+        <div class="poster-summary-actions">
+            <p class="poster-intro">Tap the poster button to download a polished 9:16 player card with the team logo, player image, and sold-to badge.</p>
+        </div>
+        <div class="poster-grid">
+            ${soldPlayers.map((sold, index) => {
+                const logoUrl = (teams.find(team => team.name === sold.soldTo) || {}).logoUrl || 'https://via.placeholder.com/120x120/ffffff/000000?text=Logo';
+                return `
+                    <div class="poster-card" style="background-image: linear-gradient(180deg, rgba(15,23,42,0.24), rgba(15,23,42,0.75)), url('${sold.imageUrl || 'https://via.placeholder.com/720x1280/0f172a/ffffff?text=Player'}');">
+                        <div class="poster-logo" style="background-image: url('${logoUrl}');"></div>
+                        <div class="poster-content">
+                            <div>
+                                <div class="poster-topline">Auction Hero</div>
+                                <div class="poster-name">${sold.playerName}</div>
+                                <div class="poster-team">Sold to ${sold.soldTo}</div>
+                            </div>
+                            <div class="poster-footer">
+                                <div class="poster-meta">₹${sold.soldPrice.toLocaleString()}</div>
+                                <button class="btn-primary poster-download-btn" onclick="downloadPlayerPoster(${index})">Download Poster</button>
+                            </div>
                         </div>
-                        <div class="summary-player-meta">
-                            <div class="meta-item"><strong>Team:</strong> ${sold.soldTo}</div>
-                            <div class="meta-item"><strong>Sold:</strong> ${sold.soldAt}</div>
-                        </div>
                     </div>
-                </div>
-            `).join('')}
+                `;
+            }).join('')}
         </div>
     `;
+}
+
+async function loadImage(url) {
+    return new Promise(resolve => {
+        if (!url) {
+            resolve(null);
+            return;
+        }
+
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => resolve(img);
+        img.onerror = () => resolve(null);
+        img.src = url;
+    });
+}
+
+async function createPlayerPosterDataUrl(sold) {
+    const width = 720;
+    const height = 1280;
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = width;
+    canvas.height = height;
+
+    const baseGradient = ctx.createLinearGradient(0, 0, 0, height);
+    baseGradient.addColorStop(0, '#171f3b');
+    baseGradient.addColorStop(1, '#090b18');
+    ctx.fillStyle = baseGradient;
+    ctx.fillRect(0, 0, width, height);
+
+    const playerImg = await loadImage(sold.imageUrl || '');
+    if (playerImg) {
+        ctx.save();
+        ctx.globalAlpha = 0.32;
+        ctx.drawImage(playerImg, 0, 0, width, height);
+        ctx.restore();
+    }
+
+    ctx.fillStyle = 'rgba(8, 12, 28, 0.58)';
+    ctx.fillRect(0, 0, width, height);
+
+    const team = teams.find(teamItem => teamItem.name === sold.soldTo);
+    const logoImg = await loadImage(team?.logoUrl || '');
+    if (logoImg) {
+        const maxSize = width * 0.66;
+        const ratio = logoImg.width / logoImg.height;
+        const logoWidth = ratio >= 1 ? maxSize : maxSize * ratio;
+        const logoHeight = ratio >= 1 ? maxSize / ratio : maxSize;
+        ctx.save();
+        ctx.globalAlpha = 0.18;
+        ctx.translate((width - logoWidth) / 2, height * 0.14);
+        ctx.drawImage(logoImg, 0, 0, logoWidth, logoHeight);
+        ctx.restore();
+    }
+
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.48)';
+    ctx.fillRect(0, height - 370, width, 370);
+
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = '#f9a8d4';
+    ctx.font = '600 20px Poppins';
+    ctx.fillText('SOLD PLAYER', width / 2, height - 320);
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '800 54px Poppins';
+    ctx.fillText(sold.playerName, width / 2, height - 250);
+    ctx.fillStyle = '#f8fafc';
+    ctx.font = '500 26px Poppins';
+    ctx.fillText(`Sold to ${sold.soldTo}`, width / 2, height - 190);
+    ctx.fillStyle = '#cbd5e1';
+    ctx.font = '500 20px Poppins';
+    ctx.fillText(`Price ₹${sold.soldPrice.toLocaleString()}`, width / 2, height - 144);
+
+    return canvas.toDataURL('image/png');
+}
+
+async function downloadPlayerPoster(index) {
+    const sold = soldPlayers[index];
+    const posterUrl = await createPlayerPosterDataUrl(sold);
+    const link = document.createElement('a');
+    link.href = posterUrl;
+    link.download = `${sold.playerName.replace(/\s+/g, '_')}_poster.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
 
 // Render Unsold Players
@@ -1415,6 +1501,7 @@ window.removePlayer = removePlayer;
 window.removeTeam = removeTeam;
 window.printSummary = printSummary;
 window.downloadPlayersCSV = downloadPlayersCSV;
+window.downloadPlayerPoster = downloadPlayerPoster;
 window.resetAuction = resetAuction;
 
 // Initialize on load
