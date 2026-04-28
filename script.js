@@ -1210,21 +1210,30 @@ function renderSoldPlayers() {
         return;
     }
 
-    container.innerHTML = soldPlayers.map((sold, index) => `
-        <div class="sold-player" style="display:flex;align-items:center; gap:12px;">
-            <img src="${sold.imageUrl || 'https://placeholder.com/70x90/667eea/ffffff?text=No+Img'}" alt="${sold.playerName}" style="width:70px;height:90px;object-fit:cover;border-radius:8px;border:2px solid #667eea;" onerror="console.log('Image failed to load for:', sold.playerName, sold.imageUrl)" />
-            <div style="flex:1;">
-                <div style="margin-bottom: 8px; color: #999; font-size: 12px;">#${index + 1}</div>
-                <div class="sold-info" style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
-                    <span class="sold-player-name">${sold.playerName}</span>
-                    <span class="sold-price">₹${sold.soldPrice.toLocaleString()}</span>
+    container.innerHTML = `
+        <div class="summary-player-grid">
+            ${soldPlayers.map((sold, index) => `
+                <div class="summary-player-card sold-card">
+                    <div class="summary-player-image">
+                        <img src="${sold.imageUrl || 'https://placeholder.com/150x200/28a745/ffffff?text=SOLD'}" alt="${sold.playerName}" onerror="this.src='https://placeholder.com/150x200/28a745/ffffff?text=SOLD'">
+                        <div class="card-status sold-status">SOLD</div>
+                    </div>
+                    <div class="summary-player-info">
+                        <div class="summary-player-name">${sold.playerName}</div>
+                        <div class="summary-player-price">₹${sold.soldPrice.toLocaleString()}</div>
+                        <div class="summary-player-details">
+                            <span class="badge badge-role">${sold.role}</span>
+                            <span class="badge badge-category">Cat ${sold.category}</span>
+                        </div>
+                        <div class="summary-player-meta">
+                            <div class="meta-item"><strong>Team:</strong> ${sold.soldTo}</div>
+                            <div class="meta-item"><strong>Sold:</strong> ${sold.soldAt}</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="sold-team" style="font-size:13px; color:#444;">
-                    <strong>${sold.soldTo}</strong> • ${sold.role} • Category ${sold.category}
-                </div>
-            </div>
+            `).join('')}
         </div>
-    `).join('');
+    `;
 }
 
 // Render Unsold Players
@@ -1236,19 +1245,29 @@ function renderUnsoldPlayers() {
         return;
     }
 
-    container.innerHTML = unsoldPlayers.map(unsold => `
-        <div class="list-item" style="align-items:flex-start; gap:12px;">
-            <img src="${unsold.imageUrl || 'https://placeholder.com/70x90/667eea/ffffff?text=No+Img'}" alt="${unsold.playerName}" style="width:70px; height:90px; object-fit:cover; border-radius:8px; border:2px solid #667eea;" />
-            <div class="item-info">
-                <div class="item-name">${unsold.playerName}</div>
-                <div class="item-details">
-                    <span class="badge badge-role">${unsold.role}</span>
-                    <span class="badge badge-category">Category ${unsold.category}</span>
-                    <span style="color: #667eea; font-weight: 600;">₹${unsold.basePrice}</span>
+    container.innerHTML = `
+        <div class="summary-player-grid">
+            ${unsoldPlayers.map(unsold => `
+                <div class="summary-player-card unsold-card">
+                    <div class="summary-player-image">
+                        <img src="${unsold.imageUrl || 'https://placeholder.com/150x200/f59e0b/ffffff?text=UNSOLD'}" alt="${unsold.playerName}" onerror="this.src='https://placeholder.com/150x200/f59e0b/ffffff?text=UNSOLD'">
+                        <div class="card-status unsold-status">UNSOLD</div>
+                    </div>
+                    <div class="summary-player-info">
+                        <div class="summary-player-name">${unsold.playerName}</div>
+                        <div class="summary-player-price">₹${unsold.basePrice.toLocaleString()}</div>
+                        <div class="summary-player-details">
+                            <span class="badge badge-role">${unsold.role}</span>
+                            <span class="badge badge-category">Cat ${unsold.category}</span>
+                        </div>
+                        <div class="summary-player-meta">
+                            <div class="meta-item"><strong>Base Price:</strong> ₹${unsold.basePrice.toLocaleString()}</div>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            `).join('')}
         </div>
-    `).join('');
+    `;
 }
 
 // Update Stats
