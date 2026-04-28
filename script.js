@@ -1209,9 +1209,6 @@ function renderSoldPlayers() {
     }
 
     container.innerHTML = `
-        <div class="poster-summary-actions">
-            <p class="poster-intro">Tap the poster button to download a polished 9:16 player card with the team logo, player image, and sold-to badge.</p>
-        </div>
         <div class="poster-grid">
             ${soldPlayers.map((sold, index) => {
                 const logoUrl = (teams.find(team => team.name === sold.soldTo) || {}).logoUrl || 'https://via.placeholder.com/120x120/ffffff/000000?text=Logo';
