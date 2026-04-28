@@ -467,38 +467,60 @@ button:active {
 .player-card {
   position: relative;
   display: grid;
-  grid-template-columns: 110px minmax(0, 1fr);
-  gap: 18px;
-  align-items: stretch;
-  padding: 22px;
-  border-radius: 24px;
-  background: rgba(15, 23, 42, 0.88);
-  border: 1px solid rgba(255,255,255,0.12);
-  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.22);
-  min-height: 260px;
+  grid-template-columns: 140px minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+  padding: 24px;
+  border-radius: 30px;
+  background: linear-gradient(180deg, rgba(10, 16, 44, 0.96), rgba(14, 26, 62, 0.92));
+  border: 1px solid rgba(96,165,250,0.16);
+  box-shadow: 0 28px 85px rgba(15, 45, 95, 0.35);
+  overflow: hidden;
+  min-height: 280px;
 }
 
-.player-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 24px 55px rgba(15, 23, 42, 0.25);
+.player-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top left, rgba(96,165,250,0.16), transparent 25%),
+              radial-gradient(circle at bottom right, rgba(168,85,247,0.08), transparent 32%);
+  pointer-events: none;
 }
 
 .player-card::after {
   content: '';
   position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,0.04), transparent 35%);
+  left: 0;
+  top: 0;
+  width: 10px;
+  height: 100%;
+  border-radius: 0 16px 16px 0;
+  background: linear-gradient(180deg, #818cf8, #7c3aed);
   pointer-events: none;
 }
 
+.player-card.category-b::after {
+  background: linear-gradient(180deg, #fb7185, #f97316);
+}
+
+.player-card.category-c::after {
+  background: linear-gradient(180deg, #facc15, #f97316);
+}
+
+.player-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 34px 90px rgba(15, 45, 95, 0.40);
+}
+
 .player-image {
-  width: 110px;
-  min-width: 110px;
-  height: 150px;
-  border-radius: 20px;
+  width: 140px;
+  min-width: 140px;
+  height: 200px;
+  border-radius: 28px;
   overflow: hidden;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.12);
+  background: linear-gradient(180deg, rgba(59,130,246,0.18), rgba(99,102,241,0.1));
+  border: 1px solid rgba(96,165,250,0.22);
 }
 
 .player-image img,
@@ -507,6 +529,7 @@ button:active {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transform: scale(1.02);
 }
 
 .team-logo {
@@ -518,6 +541,8 @@ button:active {
 }
 
 .player-info {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -637,7 +662,7 @@ button:active {
 
 .player-category-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(250px, 1fr));
+  grid-template-columns: repeat(4, minmax(240px, 1fr));
   gap: 18px;
   align-items: start;
   grid-auto-rows: minmax(320px, auto);
@@ -648,7 +673,107 @@ button:active {
 }
 
 .player-category-section .player-card {
-  min-height: 260px;
+  min-height: 280px;
+}
+
+.player-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 20px;
+  align-items: stretch;
+  padding: 26px;
+  border-radius: 30px;
+  background: linear-gradient(180deg, rgba(11, 24, 55, 0.92), rgba(18, 31, 68, 0.88));
+  border: 1px solid rgba(96, 165, 250, 0.18);
+  box-shadow: 0 28px 70px rgba(16, 56, 115, 0.28);
+  overflow: hidden;
+}
+
+.player-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top left, rgba(96, 165, 250, 0.14), transparent 28%),
+              linear-gradient(135deg, rgba(99, 102, 241, 0.08), transparent 40%);
+  pointer-events: none;
+}
+
+.player-card::after {
+  content: '';
+  position: absolute;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  right: -30px;
+  top: -30px;
+  background: rgba(59, 130, 246, 0.14);
+  filter: blur(12px);
+  pointer-events: none;
+}
+
+.player-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 32px 85px rgba(16, 56, 115, 0.35);
+}
+
+.player-info {
+  position: relative;
+  z-index: 1;
+}
+
+.player-image {
+  width: 120px;
+  min-width: 120px;
+  height: 160px;
+  border-radius: 26px;
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(59, 130, 246, 0.14), rgba(99, 102, 241, 0.08));
+  border: 1px solid rgba(96, 165, 250, 0.18);
+}
+
+.player-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.player-details {
+  gap: 10px;
+  color: #cbd5e1;
+}
+
+.player-name {
+  font-size: 18px;
+  color: #eef2ff;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+}
+
+.player-stats {
+  display: grid;
+  gap: 10px;
+  font-size: 13px;
+  color: #cbd5e1;
+}
+
+.player-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-start;
+  align-items: stretch;
+  position: relative;
+  z-index: 1;
+}
+
+.player-actions button {
+  width: auto;
+}
+
+.player-actions button {
+  width: 100%;
 }
 
 .rating-badge {
@@ -819,7 +944,7 @@ button:active {
 
 .poster-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(4, minmax(200px, 1fr));
   gap: 18px;
   margin-top: 16px;
 }
@@ -1693,21 +1818,53 @@ button,
 
 .player-card {
   position: relative;
+  display: grid;
+  grid-template-columns: 140px minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+  padding: 24px;
+  border-radius: 30px;
+  background: linear-gradient(180deg, rgba(10, 16, 44, 0.96), rgba(14, 26, 62, 0.92));
+  border: 1px solid rgba(96,165,250,0.16);
+  box-shadow: 0 28px 85px rgba(15, 45, 95, 0.35);
   overflow: hidden;
-  min-height: 180px;
+  min-height: 280px;
 }
 
 .player-card::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(255,255,255,0.06), transparent 75%);
+  background: radial-gradient(circle at top left, rgba(96,165,250,0.16), transparent 25%),
+              radial-gradient(circle at bottom right, rgba(168,85,247,0.08), transparent 32%);
   pointer-events: none;
 }
 
-.player-card:hover {
-  transform: translateY(-4px);
+.player-card::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 10px;
+  height: 100%;
+  border-radius: 0 16px 16px 0;
+  background: linear-gradient(180deg, #818cf8, #7c3aed);
+  pointer-events: none;
 }
+
+.player-card.category-b::after {
+  background: linear-gradient(180deg, #fb7185, #f97316);
+}
+
+.player-card.category-c::after {
+  background: linear-gradient(180deg, #facc15, #f97316);
+}
+
+.player-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 34px 90px rgba(15, 45, 95, 0.40);
+}
+
 
 .player-actions button {
   min-width: 100px;
