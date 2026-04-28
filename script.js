@@ -908,7 +908,7 @@ function renderPlayerList() {
                 </div>
                 <div class="player-category-grid">
                     ${playersInCategory.map(player => `
-                        <div class="player-card">
+                        <div class="player-card category-${player.category.toLowerCase()}">
                             <div class="player-image">
                                 <img src="${player.imageUrl}" alt="${player.name}" onerror="this.src='https://placeholder.com/150x200/667eea/white?text=No+Image'">
                             </div>
