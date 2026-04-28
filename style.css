@@ -806,6 +806,126 @@ button:active {
   margin-top: 16px;
 }
 
+.poster-summary-actions {
+  margin-bottom: 18px;
+}
+
+.poster-intro {
+  color: #d8d8ff;
+  font-size: 14px;
+  max-width: 760px;
+  line-height: 1.7;
+}
+
+.poster-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 18px;
+  margin-top: 16px;
+}
+
+.poster-card {
+  position: relative;
+  aspect-ratio: 9 / 16;
+  min-height: 380px;
+  border-radius: 28px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.28);
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+  background-size: cover;
+  background-position: center;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.poster-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 26px 55px rgba(0, 0, 0, 0.32);
+}
+
+.poster-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.12), rgba(15, 23, 42, 0.85));
+}
+
+.poster-logo {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  width: 70px;
+  height: 70px;
+  border-radius: 18px;
+  background-size: cover;
+  background-position: center;
+  opacity: 0.28;
+  filter: blur(0.5px);
+}
+
+.poster-content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.poster-topline {
+  color: #f9a8d4;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  font-size: 11px;
+  margin-bottom: 10px;
+}
+
+.poster-name {
+  color: #ffffff;
+  font-size: clamp(24px, 3.4vw, 38px);
+  font-weight: 800;
+  line-height: 1.05;
+  max-width: 100%;
+}
+
+.poster-team {
+  color: #d8d8ff;
+  font-size: 16px;
+  margin-top: 12px;
+  line-height: 1.4;
+}
+
+.poster-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+
+.poster-meta {
+  color: #f8fafc;
+  font-weight: 700;
+  font-size: 14px;
+  background: rgba(255,255,255,0.08);
+  padding: 10px 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.12);
+  flex: 1 1 auto;
+}
+
+.poster-download-btn {
+  min-width: 150px;
+  padding: 12px 18px;
+  border-radius: 16px;
+  text-align: center;
+  font-size: 14px;
+}
+
 .summary-player-card {
   display: flex;
   flex-direction: column;
