@@ -183,8 +183,8 @@ function addPlayer() {
     const overallRating = parseInt(document.getElementById('overallRating').value);
     const imageUrl = document.getElementById('playerImage').value.trim();
 
-    if (!name || !price || !overallRating) {
-        showInfoModal('Please fill all required fields.', 'Validation Error');
+    if (!name || Number.isNaN(price) || price < 0 || Number.isNaN(overallRating)) {
+        showInfoModal('Please fill all required fields. Base price may be 0.', 'Validation Error');
         return;
     }
 
@@ -215,9 +215,16 @@ function addTeam() {
     const owner = document.getElementById('teamOwner').value.trim();
     const budget = parseInt(document.getElementById('teamBudget').value);
     const logo = document.getElementById('teamLogo').value.trim();
+    const captain = document.getElementById('teamCaptain').value;
+    const viceCaptain = document.getElementById('teamViceCaptain').value;
 
     if (!name || !owner || !budget) {
         showInfoModal('Please fill all required fields.', 'Validation Error');
+        return;
+    }
+
+    if (captain && viceCaptain && captain === viceCaptain) {
+        showInfoModal('Captain and vice captain must be different players.', 'Validation Error');
         return;
     }
 
@@ -228,13 +235,46 @@ function addTeam() {
         budget,
         spentAmount: 0,
         logoUrl: logo || 'https://placeholder.com/80x80/667eea/ffffff?text=Logo',
+        captain: captain || null,
+        viceCaptain: viceCaptain || null,
         players: []
     };
+
+    if (captain) {
+        const selectedPlayer = players.find(p => String(p.id) === captain);
+        if (selectedPlayer) {
+            team.players.push({
+                playerId: selectedPlayer.id,
+                name: selectedPlayer.name,
+                role: selectedPlayer.role,
+                price: 0,
+                imageUrl: selectedPlayer.imageUrl,
+                isCaptain: true
+            });
+            players = players.filter(p => p.id !== selectedPlayer.id);
+        }
+    }
+
+    if (viceCaptain) {
+        const selectedPlayer = players.find(p => String(p.id) === viceCaptain);
+        if (selectedPlayer) {
+            team.players.push({
+                playerId: selectedPlayer.id,
+                name: selectedPlayer.name,
+                role: selectedPlayer.role,
+                price: 0,
+                imageUrl: selectedPlayer.imageUrl,
+                isViceCaptain: true
+            });
+            players = players.filter(p => p.id !== selectedPlayer.id);
+        }
+    }
 
     teams.push(team);
     saveData();
     clearTeamForm();
     renderTeamList();
+    renderPlayerList();
     updateStats();
 }
 
@@ -266,6 +306,7 @@ function openAddTeamModal() {
     document.getElementById('teamModalTitle').innerText = 'Add Team';
     document.getElementById('teamModalSubmitButton').innerText = 'Add Team';
     clearTeamForm();
+    populateTeamPlayerSelectors();
     document.getElementById('addTeamModal').classList.add('active');
 }
 
@@ -319,8 +360,8 @@ function updatePlayer(id) {
     const overallRating = parseInt(document.getElementById('overallRating').value);
     const imageUrl = document.getElementById('playerImage').value.trim();
 
-    if (!name || !price || !overallRating) {
-        showInfoModal('Please fill all required fields.', 'Validation Error');
+    if (!name || isNaN(price) || price < 0 || isNaN(overallRating) || overallRating <= 0) {
+        showInfoModal('Please fill all required fields and enter a valid base price.', 'Validation Error');
         return;
     }
 
@@ -362,6 +403,10 @@ function editTeam(id) {
     document.getElementById('teamBudget').value = team.budget;
     document.getElementById('teamLogo').value = team.logoUrl;
 
+    populateTeamPlayerSelectors(team);
+    if (team.captain) document.getElementById('teamCaptain').value = team.captain;
+    if (team.viceCaptain) document.getElementById('teamViceCaptain').value = team.viceCaptain;
+
     // Change button to update mode
     editingTeamId = id;
     document.getElementById('teamModalTitle').innerText = 'Update Team';
@@ -375,9 +420,16 @@ function updateTeam(id) {
     const owner = document.getElementById('teamOwner').value.trim();
     const budget = parseInt(document.getElementById('teamBudget').value);
     const logo = document.getElementById('teamLogo').value.trim();
+    const captain = document.getElementById('teamCaptain').value;
+    const viceCaptain = document.getElementById('teamViceCaptain').value;
 
     if (!name || !owner || !budget) {
         showInfoModal('Please fill all required fields.', 'Validation Error');
+        return;
+    }
+
+    if (captain && viceCaptain && captain === viceCaptain) {
+        showInfoModal('Captain and vice captain must be different players.', 'Validation Error');
         return;
     }
 
@@ -389,7 +441,9 @@ function updateTeam(id) {
         name,
         owner,
         budget,
-        logoUrl: logo || 'https://placeholder.com/80x80/667eea/ffffff?text=Logo'
+        logoUrl: logo || 'https://placeholder.com/80x80/667eea/ffffff?text=Logo',
+        captain: captain || null,
+        viceCaptain: viceCaptain || null
     };
 
     saveData();
@@ -777,7 +831,46 @@ function clearTeamForm() {
     document.getElementById('teamOwner').value = '';
     document.getElementById('teamBudget').value = '';
     document.getElementById('teamLogo').value = '';
+    document.getElementById('teamCaptain').innerHTML = '<option value="">Choose captain</option>';
+    document.getElementById('teamViceCaptain').innerHTML = '<option value="">Choose vice captain</option>';
     document.getElementById('teamName').focus();
+}
+
+function populateTeamPlayerSelectors(existingTeam = null) {
+    const captainSelect = document.getElementById('teamCaptain');
+    const viceCaptainSelect = document.getElementById('teamViceCaptain');
+    const availablePlayers = [...players];
+
+    if (existingTeam) {
+        existingTeam.players.forEach(player => {
+            if (existingTeam.captain && String(player.playerId) === String(existingTeam.captain)) {
+                availablePlayers.push({ ...player, id: player.playerId });
+            }
+            if (existingTeam.viceCaptain && String(player.playerId) === String(existingTeam.viceCaptain)) {
+                availablePlayers.push({ ...player, id: player.playerId });
+            }
+        });
+    }
+
+    const uniquePlayers = [];
+    const seenIds = new Set();
+    availablePlayers.forEach(player => {
+        const id = String(player.id || player.playerId);
+        if (!seenIds.has(id)) {
+            seenIds.add(id);
+            uniquePlayers.push(player);
+        }
+    });
+
+    uniquePlayers.sort((a, b) => a.name.localeCompare(b.name));
+
+    const defaultOption = '<option value="">Choose-player</option>';
+    captainSelect.innerHTML = defaultOption + uniquePlayers.map(player => `
+        <option value="${player.id}">${player.name} (${player.role})</option>
+    `).join('');
+    viceCaptainSelect.innerHTML = defaultOption + uniquePlayers.map(player => `
+        <option value="${player.id}">${player.name} (${player.role})</option>
+    `).join('');
 }
 
 // Save Data to Firebase
@@ -825,6 +918,7 @@ function renderAll() {
 
 // Render Player List
 function renderPlayerList() {
+    populateTeamPlayerSelectors();
     const container = document.getElementById('playerList');
 
     const allPlayers = [
@@ -1005,16 +1099,27 @@ function renderSummaryTeams() {
     teams.forEach(team => {
         const remaining = team.budget - team.spentAmount;
         const playerCount = (team.players || []).length;
-        const playerCards = (team.players || []).map(player => `
-            <div class="team-player-card">
-                <img class="player-thumb" src="${player.imageUrl || 'https://placeholder.com/90x90/8b5cf6/ffffff?text=Player'}" alt="${player.name}" onerror="this.src='https://placeholder.com/90x90/8b5cf6/ffffff?text=Player'" />
-                <div class="player-card-info">
-                    <div class="player-card-name">${player.name}</div>
-                    <div class="player-card-meta">${player.role} • ₹${player.price.toLocaleString()}</div>
+        const playerCards = (team.players || []).map(player => {
+            let statusLabel = '';
+            if (player.isCaptain) statusLabel = 'Captain';
+            else if (player.isViceCaptain) statusLabel = 'Vice Captain';
+            return `
+                <div class="team-player-card">
+                    <img class="player-thumb" src="${player.imageUrl || 'https://placeholder.com/90x90/8b5cf6/ffffff?text=Player'}" alt="${player.name}" onerror="this.src='https://placeholder.com/90x90/8b5cf6/ffffff?text=Player'" />
+                    <div class="player-card-info">
+                        <div class="player-card-name">${player.name}</div>
+                        <div class="player-card-meta">${player.role} • ₹${player.price.toLocaleString()}</div>
+                        ${statusLabel ? `<div class="player-card-badge">${statusLabel}</div>` : ''}
+                    </div>
+                    <button class="btn-release" onclick="releasePlayer(${team.id}, ${player.playerId || player.id}, '${player.name.replace(/'/g, "\\'")}')">Release</button>
                 </div>
-                <button class="btn-release" onclick="releasePlayer(${team.id}, ${player.playerId || player.id}, '${player.name.replace(/'/g, "\\'")}')">Release</button>
-            </div>
-        `).join('');
+            `;
+        }).join('');
+
+        const captain = team.players?.find(p => p.isCaptain);
+        const viceCaptain = team.players?.find(p => p.isViceCaptain);
+        const teamCaptainName = captain ? captain.name : 'Not assigned';
+        const teamViceCaptainName = viceCaptain ? viceCaptain.name : 'Not assigned';
 
         html += `
             <div class="summary-card summary-team-card">
@@ -1027,6 +1132,10 @@ function renderSummaryTeams() {
                         <span>Left ₹${remaining.toLocaleString()}</span>
                     </div>
                     <div class="summary-card-text">${playerCount > 0 ? `Players on roster:` : `No players bought yet — add stars now.`}</div>
+                    <div class="team-captains">
+                        <div class="team-captain"><strong>Captain:</strong> ${teamCaptainName}</div>
+                        <div class="team-vicecaptain"><strong>Vice Captain:</strong> ${teamViceCaptainName}</div>
+                    </div>
                     ${playerCount > 0 ? `<div class="team-player-grid">${playerCards}</div>` : ''}
                 </div>
             </div>
