@@ -411,14 +411,14 @@ function getRandomPlayer() {
     return players[randomIndex];
 }
 
-// Get Next Player in sequence
+// Get Next Player randomly
 function getNextPlayer() {
     if (players.length === 0) {
         showAuctionComplete();
         return;
     }
 
-    currentAuctionPlayer = players[0];
+    currentAuctionPlayer = getRandomPlayer();
     if (!currentAuctionPlayer) return;
 
     currentBid = currentAuctionPlayer.basePrice;
@@ -1211,20 +1211,25 @@ function renderSoldPlayers() {
     container.innerHTML = `
         <div class="poster-grid">
             ${soldPlayers.map((sold, index) => {
-                const logoUrl = (teams.find(team => team.name === sold.soldTo) || {}).logoUrl || 'https://via.placeholder.com/120x120/ffffff/000000?text=Logo';
+                const team = teams.find(teamItem => teamItem.name === sold.soldTo) || {};
+                const logoUrl = team.logoUrl || 'https://via.placeholder.com/120x120/ffffff/000000?text=Logo';
+                const teamIndex = teams.findIndex(teamItem => teamItem.name === sold.soldTo);
+                const teamClass = teamIndex === -1 ? 'team-style-blue' : teamIndex % 2 === 0 ? 'team-style-red' : 'team-style-blue';
+
                 return `
-                    <div class="poster-card" style="background-image: linear-gradient(180deg, rgba(15,23,42,0.24), rgba(15,23,42,0.75)), url('${sold.imageUrl || 'https://via.placeholder.com/720x1280/0f172a/ffffff?text=Player'}');">
-                        <div class="poster-logo" style="background-image: url('${logoUrl}');"></div>
-                        <div class="poster-content">
-                            <div>
-                                <div class="poster-topline">Auction Hero</div>
-                                <div class="poster-name">${sold.playerName}</div>
-                                <div class="poster-team">Sold to ${sold.soldTo}</div>
+                    <div class="sold-card ${teamClass}">
+                        <div class="sold-card-logo" style="background-image: url('${logoUrl}');"></div>
+                        <div class="sold-card-center">
+                            <div class="sold-card-image-shell">
+                                <img src="${sold.imageUrl || 'https://via.placeholder.com/420x550/0f172a/ffffff?text=Player'}" alt="${sold.playerName}" onerror="this.src='https://via.placeholder.com/420x550/0f172a/ffffff?text=Player'" />
                             </div>
-                            <div class="poster-footer">
-                                <div class="poster-meta">₹${sold.soldPrice.toLocaleString()}</div>
-                                <button class="btn-primary poster-download-btn" onclick="downloadPlayerPoster(${index})">Download Poster</button>
+                        </div>
+                        <div class="sold-card-info">
+                            <div class="sold-card-meta">
+                                <span>Sold to ${sold.soldTo}</span>
+                                <span>₹${sold.soldPrice.toLocaleString()}</span>
                             </div>
+                            <div class="sold-card-name">${sold.playerName}</div>
                         </div>
                     </div>
                 `;
