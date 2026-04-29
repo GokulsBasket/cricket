@@ -944,111 +944,153 @@ button:active {
 
 .poster-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(200px, 1fr));
+  grid-template-columns: repeat(4, minmax(220px, 1fr));
   gap: 18px;
   margin-top: 16px;
 }
 
-.poster-card {
+.sold-card {
   position: relative;
-  aspect-ratio: 9 / 16;
-  min-height: 380px;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 16px;
+  min-height: 420px;
+  padding: 20px;
   border-radius: 28px;
   overflow: hidden;
-  border: 1px solid rgba(255,255,255,0.10);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.28);
-  display: flex;
-  align-items: stretch;
-  justify-content: stretch;
+  border: 1px solid rgba(255,255,255,0.14);
+  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.28);
+  transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
   background-size: cover;
   background-position: center;
-  transition: transform 0.35s ease, box-shadow 0.35s ease;
 }
 
-.poster-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 26px 55px rgba(0, 0, 0, 0.32);
+.sold-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 28px 65px rgba(0, 0, 0, 0.32);
+  border-color: rgba(255,255,255,0.22);
 }
 
-.poster-card::before {
+.sold-card::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(15, 23, 42, 0.12), rgba(15, 23, 42, 0.85));
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.08), rgba(15, 23, 42, 0.85));
+  pointer-events: none;
 }
 
-.poster-logo {
+.sold-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle at top left, rgba(255,255,255,0.12), transparent 22%),
+                    radial-gradient(circle at bottom right, rgba(255,255,255,0.08), transparent 18%);
+  opacity: 0.75;
+  pointer-events: none;
+}
+
+.sold-card-logo {
   position: absolute;
   top: 18px;
   left: 18px;
-  width: 70px;
-  height: 70px;
-  border-radius: 18px;
+  width: 64px;
+  height: 64px;
+  border-radius: 20px;
   background-size: cover;
   background-position: center;
-  opacity: 0.28;
-  filter: blur(0.5px);
+  border: 1px solid rgba(255,255,255,0.22);
+  box-shadow: 0 18px 28px rgba(0, 0, 0, 0.22);
+  z-index: 2;
 }
 
-.poster-content {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.poster-topline {
-  color: #f9a8d4;
-  letter-spacing: 0.26em;
-  text-transform: uppercase;
-  font-size: 11px;
-  margin-bottom: 10px;
-}
-
-.poster-name {
-  color: #ffffff;
-  font-size: clamp(24px, 3.4vw, 38px);
-  font-weight: 800;
-  line-height: 1.05;
-  max-width: 100%;
-}
-
-.poster-team {
-  color: #d8d8ff;
-  font-size: 16px;
-  margin-top: 12px;
-  line-height: 1.4;
-}
-
-.poster-footer {
+.sold-card-center {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-top: 18px;
+  justify-content: center;
+  min-height: 260px;
+  position: relative;
+  z-index: 1;
 }
 
-.poster-meta {
-  color: #f8fafc;
-  font-weight: 700;
-  font-size: 14px;
+.sold-card-image-shell {
+  position: relative;
+  width: 180px;
+  aspect-ratio: 4 / 5;
+  border-radius: 28px;
+  overflow: hidden;
+  border: 4px solid rgba(255,255,255,0.14);
   background: rgba(255,255,255,0.08);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.22);
+}
+
+.sold-card-image-shell::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.14), rgba(255,255,255,0.00));
+  pointer-events: none;
+}
+
+.sold-card-image-shell img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sold-card-info {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 10px;
+  text-align: center;
+}
+
+.sold-card-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: #eef2ff;
+}
+
+.sold-card-meta span {
+  background: rgba(255,255,255,0.1);
   padding: 10px 14px;
   border-radius: 16px;
   border: 1px solid rgba(255,255,255,0.12);
-  flex: 1 1 auto;
+  min-width: 120px;
 }
 
-.poster-download-btn {
-  min-width: 150px;
-  padding: 12px 18px;
-  border-radius: 16px;
-  text-align: center;
-  font-size: 14px;
+.sold-card-name {
+  font-size: clamp(22px, 2.6vw, 32px);
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: 0.02em;
+  line-height: 1.05;
+}
+
+.team-style-red {
+  background: radial-gradient(circle at top left, rgba(248,113,113,0.18), transparent 28%),
+              radial-gradient(circle at bottom right, rgba(220,38,38,0.18), transparent 22%),
+              linear-gradient(180deg, rgba(55, 18, 19, 0.95), rgba(124, 10, 20, 0.95));
+}
+
+.team-style-red::after {
+  background-image: radial-gradient(circle at top left, rgba(255,255,255,0.16), transparent 20%),
+                    repeating-linear-gradient(45deg, rgba(255,255,255,0.04), rgba(255,255,255,0.04) 6px, transparent 6px, transparent 18px);
+}
+
+.team-style-blue {
+  background: radial-gradient(circle at top left, rgba(59,130,246,0.18), transparent 28%),
+               radial-gradient(circle at bottom right, rgba(30,64,175,0.16), transparent 22%),
+               linear-gradient(180deg, rgba(10, 25, 56, 0.95), rgba(21, 55, 129, 0.95));
+}
+
+.team-style-blue::after {
+  background-image: radial-gradient(circle at top left, rgba(255,255,255,0.12), transparent 20%),
+                    repeating-linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.05) 5px, transparent 5px, transparent 15px);
 }
 
 .summary-player-card {
