@@ -947,6 +947,7 @@ button:active {
   grid-template-columns: repeat(4, minmax(220px, 1fr));
   gap: 18px;
   margin-top: 16px;
+  align-items: start;
 }
 
 .sold-card {
@@ -954,8 +955,8 @@ button:active {
   display: grid;
   grid-template-rows: auto 1fr auto;
   gap: 16px;
-  min-height: 420px;
-  padding: 20px;
+  min-height: 460px;
+  padding: 24px 22px 22px;
   border-radius: 28px;
   overflow: hidden;
   border: 1px solid rgba(255,255,255,0.14);
@@ -1041,13 +1042,14 @@ button:active {
   position: relative;
   z-index: 1;
   display: grid;
-  gap: 10px;
+  gap: 12px;
   text-align: center;
+  justify-items: center;
 }
 
 .sold-card-meta {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   gap: 10px;
   align-items: center;
   flex-wrap: wrap;
@@ -1064,11 +1066,30 @@ button:active {
 }
 
 .sold-card-name {
-  font-size: clamp(22px, 2.6vw, 32px);
+  font-size: clamp(24px, 2.8vw, 34px);
   font-weight: 900;
   color: #ffffff;
   letter-spacing: 0.02em;
   line-height: 1.05;
+}
+
+.sold-card-download-btn {
+  padding: 12px 18px;
+  border-radius: 18px;
+  border: none;
+  background: rgba(255,255,255,0.12);
+  color: #f8fafc;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  width: 100%;
+  max-width: 220px;
+}
+
+.sold-card-download-btn:hover {
+  background: rgba(255,255,255,0.18);
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px rgba(255,255,255,0.12);
 }
 
 .team-style-red {
