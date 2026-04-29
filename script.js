@@ -434,8 +434,10 @@ function teamBid(teamId) {
     if (!team) return;
 
     const nextBid = getNextBidAmount(currentBid);
+    const firstBidAmount = currentAuctionPlayer.basePrice;
+    const bidAmount = currentBidder ? nextBid : firstBidAmount;
 
-    if (team.spentAmount + nextBid > team.budget) {
+    if (team.spentAmount + bidAmount > team.budget) {
         showInfoModal(`${team.name} - Budget exceeded! Cannot bid more.`, 'Bid Error');
         return;
     }
@@ -448,12 +450,13 @@ function teamBid(teamId) {
         timestamp: Date.now()
     });
 
-    // If clicking the same team that's already bidding, increase bid
     if (currentBidder && currentBidder.id === teamId) {
         currentBid = nextBid;
+    } else if (!currentBidder) {
+        currentBid = firstBidAmount;
+        currentBidder = { id: teamId, name: team.name };
     } else {
-        // New team bidding
-        currentBid = Math.max(currentBid, nextBid);
+        currentBid = nextBid;
         currentBidder = { id: teamId, name: team.name };
     }
 
@@ -1226,10 +1229,12 @@ function renderSoldPlayers() {
                         </div>
                         <div class="sold-card-info">
                             <div class="sold-card-meta">
-                                <span>Sold to ${sold.soldTo}</span>
+                                <span>Sold to</span>
+                                <span>${sold.soldTo}</span>
                                 <span>₹${sold.soldPrice.toLocaleString()}</span>
                             </div>
                             <div class="sold-card-name">${sold.playerName}</div>
+                            <button class="sold-card-download-btn" onclick="downloadPlayerPoster(${index})">Download Image</button>
                         </div>
                     </div>
                 `;
